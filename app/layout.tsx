@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -24,8 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} scroll-smooth`}>
-      <body className="min-h-screen bg-[var(--color-keld-bg)] text-[var(--color-keld-text)] font-mono antialiased flex flex-col selection:bg-[var(--color-keld-stamp)] selection:text-[var(--color-keld-stamptext)]">
+    <html lang="en" className={cn("scroll-smooth", jetbrainsMono.variable, "font-sans", geist.variable)} suppressHydrationWarning>
+      <body className="min-h-screen bg-[var(--keld-bg)] text-[var(--keld-text)] font-mono antialiased flex flex-col selection:bg-[var(--keld-stamp)] selection:text-[var(--keld-stamptext)]">
+
         {children}
       </body>
     </html>
