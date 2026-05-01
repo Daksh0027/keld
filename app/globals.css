@@ -25,25 +25,25 @@
 }
 
 :root {
-  --keld-bg:        #0D0D0D;
-  --keld-surface:   #141414;
-  --keld-surface2:  #181818;
-  --keld-border:    #2A2A2A;
-  --keld-border2:   #1E1E1E;
-  --keld-text:      #E8E6E0;
-  --keld-muted:     #6B6965;
-  --keld-hint:      #4A4845;
-  --keld-ghost:     #2A2826;
-  --keld-accent:    #C8C2B4;
-  --keld-active:    #D8D2C4;
+  --keld-bg: #0D0D0D;
+  --keld-surface: #141414;
+  --keld-surface2: #181818;
+  --keld-border: #2A2A2A;
+  --keld-border2: #1E1E1E;
+  --keld-text: #E8E6E0;
+  --keld-muted: #6B6965;
+  --keld-hint: #4A4845;
+  --keld-ghost: #2A2826;
+  --keld-accent: #C8C2B4;
+  --keld-active: #D8D2C4;
 
-  --keld-status-active:       #5A8A6A;
+  --keld-status-active: #5A8A6A;
   --keld-status-experimental: #8A7A5A;
-  --keld-status-archived:     #5A5652;
+  --keld-status-archived: #5A5652;
 
-  --keld-transition-fast:   0.12s ease;
+  --keld-transition-fast: 0.12s ease;
   --keld-transition-normal: 0.22s ease;
-  --keld-transition-slow:   0.4s ease;
+  --keld-transition-slow: 0.4s ease;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -107,23 +107,62 @@ html {
   color: var(--keld-bg);
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--keld-bg); }
-::-webkit-scrollbar-thumb { background: var(--keld-border); }
-::-webkit-scrollbar-thumb:hover { background: var(--keld-muted); }
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--keld-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--keld-border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--keld-muted);
+}
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 /* Typography specifics */
-.district-label { letter-spacing: 0.18em; line-height: 1.2; }
-.metadata { letter-spacing: 0.10em; }
-.nav-link { letter-spacing: 0.14em; line-height: 1.2; }
-.heading { letter-spacing: 0.04em; }
-.body { letter-spacing: 0.02em; line-height: 1.75; }
-.report-text { line-height: 1.8; letter-spacing: 0.02em; }
+.district-label {
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+}
+
+.metadata {
+  letter-spacing: 0.10em;
+}
+
+.nav-link {
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+}
+
+.heading {
+  letter-spacing: 0.04em;
+}
+
+.body {
+  letter-spacing: 0.02em;
+  line-height: 1.75;
+}
+
+.report-text {
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+}
 
 /* Status badge blink */
 .status-badge::after {
@@ -133,6 +172,7 @@ html {
   opacity: 0;
   transition: opacity 0.15s;
 }
+
 .project-card:hover .status-badge.status-blink::after {
   opacity: 1;
 }
@@ -143,11 +183,15 @@ html {
   transform: translateY(12px);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
+
 .is-visible .reveal-wrapper {
   opacity: 1;
   transform: translateY(0);
 }
-.lit { color: #C8C2B4 !important; }
+
+.lit {
+  color: #C8C2B4 !important;
+}
 
 /* Blueprint 2D Map Styles */
 .blueprint-wrap {
@@ -161,6 +205,7 @@ html {
   font-family: monospace;
   padding: 40px;
 }
+
 .blueprint-city-label {
   font-size: 10px;
   letter-spacing: 0.2em;
@@ -173,6 +218,7 @@ html {
   margin-right: auto;
   width: 100%;
 }
+
 .blueprint-map-area {
   position: relative;
   width: 640px;
@@ -182,15 +228,17 @@ html {
   overflow: hidden;
   user-select: none;
 }
+
 .blueprint-grid-bg {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(to right, #1a1a1a 1px, transparent 1px),
-                    linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);
+    linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);
   background-size: 20px 20px;
   opacity: 0.5;
   pointer-events: none;
 }
+
 .blueprint-scanline {
   position: absolute;
   top: 0;
@@ -202,6 +250,7 @@ html {
   animation: scan 8s linear infinite;
   pointer-events: none;
 }
+
 .blueprint-scanline-glitch {
   position: absolute;
   top: 0;
@@ -214,26 +263,46 @@ html {
   -webkit-backdrop-filter: url(#scanline-glitch);
   z-index: 20;
 }
+
 @keyframes scan {
-  0% { transform: translateX(-10px); }
-  100% { transform: translateX(650px); }
+  0% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    transform: translateX(650px);
+  }
 }
-.blueprint-road-h { position: absolute; height: 1px; background: #1a1a1a; }
-.blueprint-road-v { position: absolute; width: 1px; background: #1a1a1a; }
+
+.blueprint-road-h {
+  position: absolute;
+  height: 1px;
+  background: #1a1a1a;
+}
+
+.blueprint-road-v {
+  position: absolute;
+  width: 1px;
+  background: #1a1a1a;
+}
+
 .blueprint-district {
   position: absolute;
   cursor: pointer;
   border: 1px solid #2a2a2a;
   transition: all 0.2s ease;
 }
+
 .blueprint-district:hover {
   border-color: #4a4845;
   background: rgba(255, 255, 255, 0.03) !important;
 }
+
 .blueprint-district.active {
   border-color: #c8c2b4;
   background: rgba(255, 255, 255, 0.05) !important;
 }
+
 .blueprint-d-dot {
   position: absolute;
   width: 4px;
@@ -241,7 +310,11 @@ html {
   background: #2a2a2a;
   transition: background 0.2s;
 }
-.blueprint-district.active .blueprint-d-dot { background: #c8c2b4; }
+
+.blueprint-district.active .blueprint-d-dot {
+  background: #c8c2b4;
+}
+
 .blueprint-d-label {
   position: absolute;
   font-size: 10px;
@@ -251,8 +324,15 @@ html {
   transition: color 0.2s;
   pointer-events: none;
 }
-.blueprint-district.active .blueprint-d-label { color: #c8c2b4; }
-.blueprint-district.active .blueprint-d-label span { color: #c8c2b4 !important; }
+
+.blueprint-district.active .blueprint-d-label {
+  color: #c8c2b4;
+}
+
+.blueprint-district.active .blueprint-d-label span {
+  color: #c8c2b4 !important;
+}
+
 .blueprint-pulse-ring {
   position: absolute;
   width: 14px;
@@ -261,29 +341,41 @@ html {
   border-radius: 50%;
   animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
 }
+
 .blueprint-pulse-dot {
   width: 6px;
   height: 6px;
   background: #c8c2b4;
   border-radius: 50%;
 }
+
 @keyframes pulse-ring {
-  0% { transform: scale(0.5); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
+
 .blueprint-cursor-pos {
   font-size: 9px;
   color: #4a4845;
   letter-spacing: 0.1em;
   pointer-events: none;
 }
+
 .blueprint-info-panel {
   width: 640px;
   margin-top: 24px;
   border: 1px solid #2a2a2a;
   padding: 20px;
-  background: rgba(255,255,255,0.01);
+  background: rgba(255, 255, 255, 0.01);
 }
+
 .blueprint-info-name {
   font-size: 14px;
   letter-spacing: 0.1em;
@@ -291,6 +383,7 @@ html {
   color: #c8c2b4;
   margin-bottom: 4px;
 }
+
 .blueprint-info-code {
   font-size: 10px;
   color: #6b6965;
@@ -298,17 +391,20 @@ html {
   text-transform: uppercase;
   margin-bottom: 12px;
 }
+
 .blueprint-info-desc {
   font-size: 12px;
   color: #888;
   line-height: 1.6;
   margin-bottom: 16px;
 }
+
 .blueprint-info-tags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
+
 .blueprint-info-tag {
   font-size: 9px;
   padding: 4px 8px;
@@ -317,6 +413,7 @@ html {
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+
 .blueprint-map-footer {
   width: 640px;
   display: flex;
@@ -326,14 +423,17 @@ html {
   padding-top: 16px;
   border-top: 1px solid #1a1a1a;
 }
+
 .blueprint-status-bar {
   font-size: 10px;
   color: #4a4845;
   letter-spacing: 0.15em;
 }
+
 .blueprint-status-active {
   color: #c8c2b4;
 }
+
 .blueprint-spec-button {
   font-size: 9px;
   letter-spacing: 0.12em;
@@ -346,6 +446,7 @@ html {
   font-family: monospace;
   transition: all 0.2s;
 }
+
 .blueprint-spec-button:hover {
   color: #c8c2b4;
   border-color: #4a4845;
@@ -432,9 +533,11 @@ html {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

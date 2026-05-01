@@ -3,12 +3,12 @@
 import { useState, useRef, MouseEvent } from "react";
 
 const DATA = {
-  archives:{name:'The Archives',code:'KLD-D01 · Bureau of Records',desc:'Personnel file. Founding documents. Timeline of infrastructure decisions. The city does not hide its origins.',tags:['About','Background','Timeline','Skills registry']},
-  load:{name:'The Load District',code:'KLD-D02 · Dept. of Works',desc:'Where weight is carried. Backend systems, APIs, data pipelines — each filed as an operational report with uptime figures and post-mortems.',tags:['Backend','APIs','Databases','Infrastructure']},
-  surface:{name:'The Surface Works',code:'KLD-D03 · Public Interface Div.',desc:'What the public sees. Interfaces built to be used, not admired — though both tend to happen. Every component has a spec and a reason.',tags:['Frontend','UI/UX','React','Full-stack']},
-  proving:{name:'The Proving Ground',code:'KLD-D04 · Classified Research',desc:'Sealed test zone. Projects that did not ship, or shipped strange. Lessons catalogued by failure type. Clearance required.',tags:['Experiments','Open source','Side projects','Archived']},
-  core:{name:'Central Core',code:'KLD-CORE · The Architect\'s Hub',desc:'Where all systems converge. The singular point of architectural decision-making. One engineer. All roads lead here.',tags:['Command centre','All systems','Active']},
-  transmission:{name:'The Transmission Office',code:'KLD-D05 · Official Comms',desc:'All transmissions enter and exit here. State your purpose, your timeline, your constraints. Response within 48 hours. No small talk required.',tags:['Contact','Email','Availability','Hire']}
+  archives: { name: 'The Archives', code: 'KLD-D01 · Bureau of Records', desc: 'Personnel file. Founding documents. Timeline of infrastructure decisions. The city does not hide its origins.', tags: ['About', 'Background', 'Timeline', 'Skills registry'] },
+  load: { name: 'The Load District', code: 'KLD-D02 · Dept. of Works', desc: 'Where weight is carried. Backend systems, APIs, data pipelines — each filed as an operational report with uptime figures and post-mortems.', tags: ['Backend', 'APIs', 'Databases', 'Infrastructure'] },
+  surface: { name: 'The Surface Works', code: 'KLD-D03 · Public Interface Div.', desc: 'What the public sees. Interfaces built to be used, not admired — though both tend to happen. Every component has a spec and a reason.', tags: ['Frontend', 'UI/UX', 'React', 'Full-stack'] },
+  proving: { name: 'The Proving Ground', code: 'KLD-D04 · Classified Research', desc: 'Sealed test zone. Projects that did not ship, or shipped strange. Lessons catalogued by failure type. Clearance required.', tags: ['Experiments', 'Open source', 'Side projects', 'Archived'] },
+  core: { name: 'Central Core', code: 'KLD-CORE · The Architect\'s Hub', desc: 'Where all systems converge. The singular point of architectural decision-making. One engineer. All roads lead here.', tags: ['Command centre', 'All systems', 'Active'] },
+  transmission: { name: 'The Transmission Office', code: 'KLD-D05 · Official Comms', desc: 'All transmissions enter and exit here. State your purpose, your timeline, your constraints. Response within 48 hours. No small talk required.', tags: ['Contact', 'Email', 'Availability', 'Hire'] }
 };
 
 export default function BlueprintMap2D() {
@@ -59,7 +59,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Archives<br/><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D01</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Archives<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D01</span></div>
         </div>
 
         <div className={`blueprint-district ${activeDistrict === 'load' ? 'active' : ''}`} style={{ left: '212px', top: '12px', width: '196px', height: '116px', background: 'rgba(255,255,255,0.01)' }} onClick={() => handleSelect('load')}>
@@ -67,7 +67,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Load District<br/><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D02</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Load District<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D02</span></div>
         </div>
 
         <div className={`blueprint-district ${activeDistrict === 'surface' ? 'active' : ''}`} style={{ left: '432px', top: '12px', width: '196px', height: '116px', background: 'rgba(255,255,255,0.01)' }} onClick={() => handleSelect('surface')}>
@@ -75,7 +75,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Surface Works<br/><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D03</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Surface Works<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D03</span></div>
         </div>
 
         <div className={`blueprint-district ${activeDistrict === 'proving' ? 'active' : ''}`} style={{ left: '12px', top: '152px', width: '176px', height: '116px', background: 'rgba(255,255,255,0.01)' }} onClick={() => handleSelect('proving')}>
@@ -83,7 +83,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Proving Ground<br/><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D04</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Proving Ground<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D04</span></div>
         </div>
 
         <div className={`blueprint-district ${activeDistrict === 'core' ? 'active' : ''}`} style={{ left: '212px', top: '152px', width: '416px', height: '116px', background: 'rgba(255,255,255,0.005)' }} onClick={() => handleSelect('core')}>
@@ -91,7 +91,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>Central Core · The Architect's Hub<br/><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-CORE</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>Central Core · The Architect's Hub<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-CORE</span></div>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>
             <div className="blueprint-pulse-ring" style={{ top: '-2px', left: '-2px' }}></div>
             <div className="blueprint-pulse-dot blink"></div>
@@ -103,7 +103,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Transmission Office<br/><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D05 · ALL CHANNELS OPEN</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>The Transmission Office<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-D05 · ALL CHANNELS OPEN</span></div>
         </div>
 
         <div className="blueprint-cursor-pos" style={{ position: 'absolute', bottom: '8px', right: '10px' }}>
