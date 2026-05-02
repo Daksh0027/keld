@@ -40,7 +40,7 @@ export const DATA = {
     pos: { x: 320, y: 218 }
   },
   transmission: { 
-    name: 'The Transmission Office', code: 'KLD-D05 · Official Comms', 
+    name: 'Transmission', code: 'KLD-D05 · Official Comms', 
     desc: 'All transmissions enter and exit here. State your purpose, your timeline, your constraints. Response within 48 hours. No small talk required.', 
     tags: ['Contact', 'Email', 'Availability', 'Hire'],
     specs: { area: '8,000 SQM', clearance: 'Lvl 1', power: 'Standby', status: 'LISTENING', freq: '8.4 GHZ' },

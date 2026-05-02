@@ -16,7 +16,7 @@ const useDecipher = (text: string, active: boolean, delay: number = 0, speed: nu
 
     let iteration = 0;
     let interval: NodeJS.Timeout;
-    
+
     const timeout = setTimeout(() => {
       interval = setInterval(() => {
         setDisplayText(
@@ -36,7 +36,7 @@ const useDecipher = (text: string, active: boolean, delay: number = 0, speed: nu
           clearInterval(interval);
         }
 
-        iteration += (1 / 2) * speed; 
+        iteration += (1 / 2) * speed;
       }, 20);
     }, delay);
 
@@ -59,6 +59,7 @@ export default function BlueprintMap2D() {
   const [activeDistrict, setActiveDistrict] = useState<DistrictID | null>(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [showSpec, setShowSpec] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 0.5, y: 0.5 });
   const mapRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -70,8 +71,14 @@ export default function BlueprintMap2D() {
   };
 
   const handleSelect = (id: DistrictID) => {
+    // 1. Set active district immediately so the map can anchor to it
     setActiveDistrict(id);
-    setViewState('detail');
+    
+    // 2. Wait a tiny tick for React to commit the new anchor point to the DOM
+    // before triggering the unmount/exit animation. This solves the "always zooms to center" bug!
+    setTimeout(() => {
+      setViewState('detail');
+    }, 50);
   };
 
   const activeData = activeDistrict ? DATA[activeDistrict] : null;
@@ -80,19 +87,21 @@ export default function BlueprintMap2D() {
     <div className="blueprint-wrap">
       <AnimatePresence mode="wait">
         {viewState === 'map' ? (
-          <motion.div 
+          <motion.div
             key="map-view"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{
-              scale: 4,
+              scale: 5,
               opacity: 0,
-              filter: "blur(12px)",
-              x: activeDistrict ? (640 / 2 - DATA[activeDistrict].pos.x) * 2 : 0,
-              y: activeDistrict ? (436 / 2 - DATA[activeDistrict].pos.y) * 2 : 0,
+              filter: "blur(20px)",
+            }}
+            style={{
+              originX: activeDistrict ? DATA[activeDistrict].pos.x / 640 : 0.5,
+              originY: activeDistrict ? (DATA[activeDistrict].pos.y + 52) / 552 : 0.5,
             }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center w-[640px] mx-auto"
           >
             <h2 className="sr-only">Keld interactive city map</h2>
             <div className="w-full flex justify-between items-end mb-4 border-b border-[#1a1a1a] pb-4">
@@ -100,23 +109,23 @@ export default function BlueprintMap2D() {
               <p className="text-[10px] tracking-[0.3em] text-[#444] uppercase">Select sector to enter</p>
             </div>
 
-            <div 
-              className="blueprint-map-area" 
-              id="map" 
+            <div
+              className="blueprint-map-area"
+              id="map"
               style={{ height: '436px' }}
-              onMouseMove={handleMouseMove} 
+              onMouseMove={handleMouseMove}
               ref={mapRef}
             >
               <div className="blueprint-grid-bg"></div>
               <div className="blueprint-scanline"></div>
-              
+
               {/* Layout Roads - Segmented to avoid crossing the massive Core */}
               <div className="absolute top-[146px] left-0 right-0 h-px bg-[#111] z-0"></div>
               <div className="absolute top-[290px] left-0 right-0 h-px bg-[#111] z-0"></div>
-              
+
               <div className="absolute left-[214px] top-0 h-[146px] w-px bg-[#111] z-0"></div>
               <div className="absolute left-[214px] top-[290px] bottom-0 w-px bg-[#111] z-0"></div>
-              
+
               <div className="absolute left-[426px] top-0 h-[146px] w-px bg-[#111] z-0"></div>
               <div className="absolute left-[426px] top-[290px] bottom-0 w-px bg-[#111] z-0"></div>
 
@@ -124,7 +133,7 @@ export default function BlueprintMap2D() {
                 const d = DATA[id];
                 const isActive = activeDistrict === id;
                 const isCore = id === 'core';
-                
+
                 // 3-1-3 Layout: 188px widths, 24px gaps, 14px margins
                 const gridStyles: Record<DistrictID, any> = {
                   archives: { left: '14px', top: '14px', width: '188px', height: '120px' },
@@ -136,14 +145,18 @@ export default function BlueprintMap2D() {
                   classified: { left: '438px', top: '302px', width: '188px', height: '120px' }
                 };
 
+                // Calculate radial distance from center (320, 218) for a spatial load animation
+                const distFromCenter = Math.sqrt(Math.pow(d.pos.x - 320, 2) + Math.pow(d.pos.y - 218, 2));
+                const spatialDelay = 0.1 + (distFromCenter * 0.0015);
+
                 return (
-                  <motion.div 
+                  <motion.div
                     key={id}
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    transition={{ delay: 0.1 + (Object.keys(DATA).indexOf(id) * 0.1) }} 
-                    className={`blueprint-district group cursor-crosshair z-10 ${isActive ? 'active' : ''}`} 
-                    style={gridStyles[id]} 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: spatialDelay }}
+                    className={`blueprint-district group cursor-crosshair z-10 ${isActive ? 'active' : ''}`}
+                    style={gridStyles[id]}
                     onClick={() => handleSelect(id)}
                   >
                     <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-[#2a2a2a] group-hover:border-[#C8A84B] transition-colors"></div>
@@ -158,7 +171,7 @@ export default function BlueprintMap2D() {
                     <div className={`px-4 py-3 h-full flex flex-col justify-between relative z-10 overflow-hidden ${isCore ? 'items-center' : ''}`}>
                       <div className={isCore ? 'w-full flex flex-col items-center text-center' : 'w-full'}>
                         <div className={`flex items-start mb-1 ${isCore ? 'justify-center gap-3' : 'justify-between'}`}>
-                          <span className="text-[12px] font-bold tracking-[0.1em] text-[#c8c2b4] group-hover:text-white transition-colors">{d.name.toUpperCase()}</span>
+                          <span className="text-[12px] font-bold tracking-[0.1em] text-[#c8c2b4] group-hover:text-white transition-colors truncate">{d.name.toUpperCase()}</span>
                           {isCore && <div className="w-2 h-2 bg-[#C8A84B] shadow-[0_0_8px_#C8A84B] mt-[3px]"></div>}
                         </div>
                         <div className="text-[8px] text-[#c8c2b4] opacity-30 tracking-[0.05em] uppercase truncate">{d.code}</div>
@@ -175,7 +188,7 @@ export default function BlueprintMap2D() {
                           ))}
                         </div>
                         <div className={`h-0 overflow-hidden group-hover:h-4 transition-all duration-300 mt-1 ${isCore ? 'text-center' : ''}`}>
-                           <span className="text-[8px] text-[#C8A84B] tracking-[0.2em] font-bold block pt-1">▶ ENTER_DISTRICT</span>
+                          <span className="text-[8px] text-[#C8A84B] tracking-[0.2em] font-bold block pt-1">▶ ENTER_DISTRICT</span>
                         </div>
                       </div>
                     </div>
@@ -194,7 +207,7 @@ export default function BlueprintMap2D() {
               <p className="blueprint-status-bar !m-0 !text-[11px] !p-0 border-none">
                 SYSTEM_READY · <span className="text-[#C8A84B]">LIVE<span className="blink">█</span></span>
               </p>
-              <button 
+              <button
                 className="text-[10px] tracking-[0.4em] text-[#6b6965] hover:text-[#C8A84B] transition-all flex items-center gap-2 border border-[#1a1a1a] px-6 py-2 bg-black/50"
                 onClick={() => setShowSpec(true)}
               >
@@ -203,7 +216,7 @@ export default function BlueprintMap2D() {
             </div>
           </motion.div>
         ) : (
-          <motion.div 
+          <motion.div
             key="detail-view"
             initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
@@ -217,11 +230,11 @@ export default function BlueprintMap2D() {
               <div className="p-10 relative z-10">
                 <header className="mb-12 border-b border-[#2a2a2a] pb-8 flex justify-between items-start">
                   <div className="flex-1">
-                    <button 
+                    <button
                       onClick={() => {
                         setActiveDistrict(null);
                         setViewState('map');
-                      }} 
+                      }}
                       className="text-[#6b6965] hover:text-[#C8A84B] transition-all mb-6 block text-[11px] tracking-[0.3em] uppercase border border-[#1a1a1a] px-4 py-2 w-fit bg-black"
                     >
                       ← RETURN_TO_PLAN
