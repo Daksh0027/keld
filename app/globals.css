@@ -658,3 +658,21 @@ html {
     @apply font-sans;
   }
 }
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 0.03;
+  mix-blend-overlay: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.crt-scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%), linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
+  background-size: 100% 4px, 3px 100%;
+}
