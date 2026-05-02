@@ -91,7 +91,7 @@ export default function BlueprintMap2D() {
           <div className="blueprint-d-dot" style={{ top: '6px', right: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', left: '6px' }}></div>
           <div className="blueprint-d-dot" style={{ bottom: '6px', right: '6px' }}></div>
-          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>Central Core · The Architect's Hub<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-CORE</span></div>
+          <div className="blueprint-d-label" style={{ top: '18px', left: '14px' }}>Central Core · The Architect&apos;s Hub<br /><span style={{ color: '#2A2A2A', fontSize: '8px' }}>KLD-CORE</span></div>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>
             <div className="blueprint-pulse-ring" style={{ top: '-2px', left: '-2px' }}></div>
             <div className="blueprint-pulse-dot blink"></div>
