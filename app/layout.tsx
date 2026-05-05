@@ -3,7 +3,7 @@ import { JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -13,10 +13,10 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'Keld — City of Constructed Systems',
-  description: 'A portfolio by [YOUR NAME]. Full-stack systems. Every interface load-bearing.',
+  description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
   openGraph: {
     title: 'Keld — City of Constructed Systems',
-    description: 'A portfolio by [YOUR NAME]. Full-stack systems. Every interface load-bearing.',
+    description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
     type: 'website',
   },
 };
