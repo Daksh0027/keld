@@ -81,6 +81,14 @@ export default function BlueprintMap2D() {
     }, 50);
   };
 
+  const handleBackToMap = () => {
+    setViewState('map');
+    // Keep the active district during transition for zoom origin
+    setTimeout(() => {
+      setActiveDistrict(null);
+    }, 500);
+  };
+
   const activeData = activeDistrict ? DATA[activeDistrict] : null;
 
   const DISTRICT_ORDER: DistrictID[] = ['archives', 'load', 'surface', 'core', 'proving', 'transmission', 'classified'];
@@ -98,7 +106,12 @@ export default function BlueprintMap2D() {
   const nextData = nextDistrictId ? DATA[nextDistrictId] : null;
 
   return (
-    <div className="blueprint-wrap">
+    <div 
+      className="blueprint-wrap"
+      onClick={() => {
+        if (viewState === 'detail') handleBackToMap();
+      }}
+    >
       <AnimatePresence mode="wait">
         {viewState === 'map' ? (
           <motion.div
@@ -116,6 +129,7 @@ export default function BlueprintMap2D() {
             }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
             className="flex flex-col items-center w-[640px] mx-auto"
+            onClick={(e) => e.stopPropagation()}
           >
             <h2 className="sr-only">Keld interactive city map</h2>
             <div className="w-full flex justify-between items-end mb-4 border-b border-[#1a1a1a] pb-4">
@@ -237,6 +251,7 @@ export default function BlueprintMap2D() {
             exit={{ opacity: 0, scale: 1.02, filter: "blur(10px)" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="w-full max-w-6xl bg-[#050505] border border-[#2a2a2a] relative z-50 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none noise-bg" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' }}></div>
 
@@ -285,10 +300,7 @@ export default function BlueprintMap2D() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-6 text-[11px] tracking-[0.3em] uppercase">
                           <button
-                            onClick={() => {
-                              setViewState('map');
-                              setTimeout(() => setActiveDistrict(null), 500);
-                            }}
+                            onClick={handleBackToMap}
                             className="text-[#6b6965] hover:text-[#C8A84B] transition-colors flex items-center gap-2 border border-[#1a1a1a] px-3 py-1 bg-black"
                           >
                             <span className="text-lg leading-none -mt-[2px] opacity-50">◂</span> MAP
