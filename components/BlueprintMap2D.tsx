@@ -83,6 +83,20 @@ export default function BlueprintMap2D() {
 
   const activeData = activeDistrict ? DATA[activeDistrict] : null;
 
+  const DISTRICT_ORDER: DistrictID[] = ['archives', 'load', 'surface', 'core', 'proving', 'transmission', 'classified'];
+  
+  let prevDistrictId: DistrictID | null = null;
+  let nextDistrictId: DistrictID | null = null;
+  
+  if (activeDistrict) {
+    const currentIndex = DISTRICT_ORDER.indexOf(activeDistrict);
+    prevDistrictId = DISTRICT_ORDER[(currentIndex - 1 + DISTRICT_ORDER.length) % DISTRICT_ORDER.length];
+    nextDistrictId = DISTRICT_ORDER[(currentIndex + 1) % DISTRICT_ORDER.length];
+  }
+  
+  const prevData = prevDistrictId ? DATA[prevDistrictId] : null;
+  const nextData = nextDistrictId ? DATA[nextDistrictId] : null;
+
   return (
     <div className="blueprint-wrap">
       <AnimatePresence mode="wait">
@@ -222,95 +236,146 @@ export default function BlueprintMap2D() {
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 1.02, filter: "blur(10px)" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-full max-w-5xl bg-[#050505] border border-[#2a2a2a] relative z-50 overflow-hidden"
+            className="w-full max-w-6xl bg-[#050505] border border-[#2a2a2a] relative z-50 overflow-hidden"
           >
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none noise-bg" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' }}></div>
 
-            {activeData && (
-              <div className="p-10 relative z-10">
-                <header className="mb-12 border-b border-[#2a2a2a] pb-8 flex justify-between items-start">
-                  <div className="flex-1">
+            <AnimatePresence mode="wait">
+              {activeData && activeDistrict && (
+                <motion.div
+                  key={activeDistrict}
+                  initial={{ opacity: 0, filter: "blur(10px)", scale: 0.98 }}
+                  animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+                  exit={{ opacity: 0, filter: "blur(10px)", scale: 1.02 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="w-full h-full relative"
+                >
+                  {prevData && prevDistrictId && (
                     <button
-                      onClick={() => {
-                        setActiveDistrict(null);
-                        setViewState('map');
-                      }}
-                      className="text-[#6b6965] hover:text-[#C8A84B] transition-all mb-6 block text-[11px] tracking-[0.3em] uppercase border border-[#1a1a1a] px-4 py-2 w-fit bg-black"
+                      onClick={() => handleSelect(prevDistrictId)}
+                      className="absolute left-0 top-0 bottom-0 w-12 border-r border-[#1a1a1a] bg-[#050505]/50 hover:bg-[#C8A84B]/5 transition-all z-20 flex flex-col items-center justify-center gap-8 group"
                     >
-                      ← RETURN_TO_PLAN
+                      <span className="text-[#6b6965] group-hover:text-[#C8A84B] transition-colors text-xs">◄</span>
+                      <div 
+                        className="text-[10px] tracking-[0.3em] uppercase text-[#6b6965] group-hover:text-[#C8A84B] transition-colors whitespace-nowrap"
+                        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                      >
+                        {prevData.code} · {prevData.name}
+                      </div>
                     </button>
-                    <h1 className="text-5xl font-black tracking-tighter uppercase text-[#C8A84B] mb-2">
-                      <DecipherText text={activeData.name} active={viewState === 'detail'} delay={300} speed={1.5} />
-                    </h1>
-                    <div className="flex items-center gap-4">
-                      <span className="text-[#6b6965] tracking-[0.4em] uppercase text-xs">{activeData.code}</span>
-                      <span className="h-px w-20 bg-[#1a1a1a]"></span>
-                    </div>
-                  </div>
-                  <div className="text-right border-l border-[#2a2a2a] pl-8">
-                    <p className="text-[10px] text-[#6b6965] mb-2 tracking-widest uppercase">REGISTRY_STATUS</p>
-                    <p className="text-sm font-bold uppercase text-[#C8A84B] tracking-widest">
-                      {activeData.specs.status}
-                    </p>
-                  </div>
-                </header>
+                  )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                  <div className="lg:col-span-8">
-                    <section className="mb-16">
-                      <h2 className="text-[10px] text-[#C8A84B] uppercase tracking-[0.5em] mb-6 flex items-center gap-4">
-                        <span className="w-2 h-2 bg-[#C8A84B]"></span>
-                        FUNCTIONAL_ANALYSIS
-                      </h2>
-                      <p className="text-xl leading-[1.8] text-[#a8a59b] font-light">
-                        <DecipherText text={activeData.desc} active={viewState === 'detail'} delay={600} speed={1.5} />
-                      </p>
-                    </section>
-
-                    <section>
-                      <h2 className="text-[10px] text-[#6b6965] uppercase tracking-[0.5em] mb-6">TAG_INDEX</h2>
-                      <div className="flex flex-wrap gap-3">
-                        {activeData.tags.map(tag => (
-                          <span key={tag} className="px-5 py-2 border border-[#1a1a1a] text-[#555] text-[11px] uppercase tracking-widest hover:text-[#C8A84B] hover:border-[#C8A84B]/30 transition-all cursor-default bg-[#080808]">
-                            {tag}
-                          </span>
-                        ))}
+                  {nextData && nextDistrictId && (
+                    <button
+                      onClick={() => handleSelect(nextDistrictId)}
+                      className="absolute right-0 top-0 bottom-0 w-12 border-l border-[#1a1a1a] bg-[#050505]/50 hover:bg-[#C8A84B]/5 transition-all z-20 flex flex-col items-center justify-center gap-8 group"
+                    >
+                      <div 
+                        className="text-[10px] tracking-[0.3em] uppercase text-[#6b6965] group-hover:text-[#C8A84B] transition-colors whitespace-nowrap"
+                        style={{ writingMode: 'vertical-rl' }}
+                      >
+                        {nextData.code} · {nextData.name}
                       </div>
-                    </section>
-                  </div>
+                      <span className="text-[#6b6965] group-hover:text-[#C8A84B] transition-colors text-xs">►</span>
+                    </button>
+                  )}
 
-                  <div className="lg:col-span-4 space-y-12">
-                    <section className="p-8 border border-[#2a2a2a] bg-[#080808]/80 backdrop-blur-sm">
-                      <h2 className="text-[10px] text-[#C8A84B] uppercase tracking-[0.4em] mb-8">ENGINEERING_SPECS</h2>
-                      <div className="space-y-6">
-                        {Object.entries(activeData.specs).slice(0, 3).map(([key, val]) => (
-                          <div key={key} className="flex justify-between border-b border-[#1a1a1a] pb-3">
-                            <span className="text-[11px] text-[#6b6965] tracking-widest">{key.toUpperCase()}</span>
-                            <span className="text-[11px] font-bold uppercase text-[#c8c2b4]">{val}</span>
+                  <div className="px-24 py-10 relative z-10">
+                    <header className="mb-12 border-b border-[#2a2a2a] pb-8 flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-6 text-[11px] tracking-[0.3em] uppercase">
+                          <button
+                            onClick={() => {
+                              setViewState('map');
+                              setTimeout(() => setActiveDistrict(null), 500);
+                            }}
+                            className="text-[#6b6965] hover:text-[#C8A84B] transition-colors flex items-center gap-2 border border-[#1a1a1a] px-3 py-1 bg-black"
+                          >
+                            <span className="text-lg leading-none -mt-[2px] opacity-50">◂</span> MAP
+                          </button>
+                          <span className="text-[#333]">/</span>
+                          <span className="text-[#C8A84B]">
+                            {activeDistrict}
+                          </span>
+                          <span className="text-[#333]">/</span>
+                          <span className="text-[#c8c2b4]">
+                            {activeData.code}
+                          </span>
+                        </div>
+                        <h1 className="text-5xl font-black tracking-tighter uppercase text-[#C8A84B] mb-2">
+                          <DecipherText text={activeData.name} active={viewState === 'detail'} delay={300} speed={1.5} />
+                        </h1>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[#6b6965] tracking-[0.4em] uppercase text-xs">{activeData.code}</span>
+                          <span className="h-px w-20 bg-[#1a1a1a]"></span>
+                        </div>
+                      </div>
+                      <div className="text-right border-l border-[#2a2a2a] pl-8">
+                        <p className="text-[10px] text-[#6b6965] mb-2 tracking-widest uppercase">REGISTRY_STATUS</p>
+                        <p className="text-sm font-bold uppercase text-[#C8A84B] tracking-widest">
+                          {activeData.specs.status}
+                        </p>
+                      </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                      <div className="lg:col-span-8">
+                        <section className="mb-16">
+                          <h2 className="text-[10px] text-[#C8A84B] uppercase tracking-[0.5em] mb-6 flex items-center gap-4">
+                            <span className="w-2 h-2 bg-[#C8A84B]"></span>
+                            FUNCTIONAL_ANALYSIS
+                          </h2>
+                          <p className="text-xl leading-[1.8] text-[#a8a59b] font-light">
+                            <DecipherText text={activeData.desc} active={viewState === 'detail'} delay={600} speed={1.5} />
+                          </p>
+                        </section>
+
+                        <section>
+                          <h2 className="text-[10px] text-[#6b6965] uppercase tracking-[0.5em] mb-6">TAG_INDEX</h2>
+                          <div className="flex flex-wrap gap-3">
+                            {activeData.tags.map(tag => (
+                              <span key={tag} className="px-5 py-2 border border-[#1a1a1a] text-[#555] text-[11px] uppercase tracking-widest hover:text-[#C8A84B] hover:border-[#C8A84B]/30 transition-all cursor-default bg-[#080808]">
+                                {tag}
+                              </span>
+                            ))}
                           </div>
-                        ))}
+                        </section>
                       </div>
-                    </section>
 
-                    <section className="p-8 border border-[#1a1a1a]">
-                      <h2 className="text-[10px] text-[#6b6965] uppercase tracking-[0.4em] mb-8">NODE_CONNECTIONS</h2>
-                      <div className="flex flex-wrap gap-3">
-                        {activeData.connections.map(conn => (
-                          <span key={conn} className="text-[10px] text-[#C8A84B] px-4 py-2 border border-[#C8A84B]/20 uppercase tracking-widest bg-[#C8A84B]/5">
-                            {conn}
-                          </span>
-                        ))}
+                      <div className="lg:col-span-4 space-y-12">
+                        <section className="p-8 border border-[#2a2a2a] bg-[#080808]/80 backdrop-blur-sm">
+                          <h2 className="text-[10px] text-[#C8A84B] uppercase tracking-[0.4em] mb-8">ENGINEERING_SPECS</h2>
+                          <div className="space-y-6">
+                            {Object.entries(activeData.specs).slice(0, 3).map(([key, val]) => (
+                              <div key={key} className="flex justify-between border-b border-[#1a1a1a] pb-3">
+                                <span className="text-[11px] text-[#6b6965] tracking-widest">{key.toUpperCase()}</span>
+                                <span className="text-[11px] font-bold uppercase text-[#c8c2b4]">{val}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+
+                        <section className="p-8 border border-[#1a1a1a]">
+                          <h2 className="text-[10px] text-[#6b6965] uppercase tracking-[0.4em] mb-8">NODE_CONNECTIONS</h2>
+                          <div className="flex flex-wrap gap-3">
+                            {activeData.connections.map(conn => (
+                              <span key={conn} className="text-[10px] text-[#C8A84B] px-4 py-2 border border-[#C8A84B]/20 uppercase tracking-widest bg-[#C8A84B]/5">
+                                {conn}
+                              </span>
+                            ))}
+                          </div>
+                        </section>
                       </div>
-                    </section>
+                    </div>
+
+                    <footer className="mt-24 pt-8 border-t border-[#1a1a1a] text-[#333] text-[10px] tracking-[0.5em] uppercase flex justify-between">
+                      <p>KELD URBAN PLANNING AUTHORITY · SECURE_DOCS</p>
+                      <p>REF: {activeDistrict.toUpperCase()}_PROTO_001</p>
+                    </footer>
                   </div>
-                </div>
-
-                <footer className="mt-24 pt-8 border-t border-[#1a1a1a] text-[#333] text-[10px] tracking-[0.5em] uppercase flex justify-between">
-                  <p>KELD URBAN PLANNING AUTHORITY · SECURE_DOCS</p>
-                  <p>REF: {activeDistrict?.toUpperCase()}_PROTO_001</p>
-                </footer>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
