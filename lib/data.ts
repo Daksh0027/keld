@@ -5,7 +5,7 @@ export const DATA = {
     tags: ['History', 'Background', 'Education', 'Timeline'],
     specs: { area: '12,000 SQM', clearance: 'Lvl 2', power: 'Offline', status: 'ACTIVE', sec: 'LEVEL 3' },
     connections: ['D02', 'CORE'],
-    pos: { x: 108, y: 74 }
+    pos: { x: 108, y: 362 }
   },
   load: {
     name: 'Tech Stack', code: 'TECH STACK',
@@ -13,7 +13,7 @@ export const DATA = {
     tags: ['Frontend', 'Backend', 'Databases', 'Tools'],
     specs: { area: '45,000 SQM', clearance: 'Lvl 4', power: 'Optimal', status: 'ACTIVE', cap: '847 UNITS' },
     connections: ['D01', 'D03', 'CORE'],
-    pos: { x: 320, y: 74 }
+    pos: { x: 532, y: 74 }
   },
   surface: {
     name: 'Experience', code: 'OPERATIONAL HISTORY',
@@ -21,7 +21,7 @@ export const DATA = {
     tags: ['Work', 'Roles', 'Career', 'Deployments'],
     specs: { area: '28,000 SQM', clearance: 'Lvl 1', power: 'Nominal', status: 'ACTIVE', node: 'PUBLIC' },
     connections: ['D02'],
-    pos: { x: 532, y: 74 }
+    pos: { x: 320, y: 218 }
   },
   proving: {
     name: 'Projects', code: 'CLASSIFIED RESEARCH',
@@ -29,7 +29,7 @@ export const DATA = {
     tags: ['Portfolio', 'Applications', 'Open Source', 'Experiments'],
     specs: { area: '15,000 SQM', clearance: 'Lvl 5', power: 'Fluctuating', status: 'LOCKED', risk: 'HIGH' },
     connections: ['CORE'],
-    pos: { x: 108, y: 362 }
+    pos: { x: 320, y: 74 }
   },
   core: {
     name: 'About', code: 'THE OPERATOR',
@@ -37,7 +37,7 @@ export const DATA = {
     tags: ['Profile', 'Identity', 'Philosophy', 'Operator'],
     specs: { area: '100,000 SQM', clearance: 'Lvl 0 (Admin)', power: 'Maximum', status: 'OPTIMAL', auth: 'PRIMARY' },
     connections: ['D01', 'D02', 'D04', 'D05'],
-    pos: { x: 320, y: 218 }
+    pos: { x: 108, y: 74 }
   },
   transmission: {
     name: 'Certifications', code: 'ISSUED CREDENTIALS',

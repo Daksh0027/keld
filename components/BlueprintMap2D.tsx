@@ -36,8 +36,8 @@ const useDecipher = (text: string, active: boolean, delay: number = 0, speed: nu
           clearInterval(interval);
         }
 
-        iteration += (1 / 2) * speed;
-      }, 20);
+        iteration += 1 * speed;
+      }, 15);
     }, delay);
 
     return () => {
@@ -91,7 +91,7 @@ export default function BlueprintMap2D() {
 
   const activeData = activeDistrict ? DATA[activeDistrict] : null;
 
-  const DISTRICT_ORDER: DistrictID[] = ['archives', 'load', 'surface', 'core', 'proving', 'transmission', 'classified'];
+  const DISTRICT_ORDER: DistrictID[] = ['core', 'proving', 'load', 'surface', 'archives', 'transmission', 'classified'];
   
   let prevDistrictId: DistrictID | null = null;
   let nextDistrictId: DistrictID | null = null;
@@ -160,15 +160,15 @@ export default function BlueprintMap2D() {
               {(Object.keys(DATA) as DistrictID[]).map((id) => {
                 const d = DATA[id];
                 const isActive = activeDistrict === id;
-                const isCore = id === 'core';
+                const isWide = id === 'surface';
 
                 // 3-1-3 Layout: 188px widths, 24px gaps, 14px margins
                 const gridStyles: Record<DistrictID, any> = {
-                  archives: { left: '14px', top: '14px', width: '188px', height: '120px' },
-                  load: { left: '226px', top: '14px', width: '188px', height: '120px' },
-                  surface: { left: '438px', top: '14px', width: '188px', height: '120px' },
-                  core: { left: '14px', top: '158px', width: '612px', height: '120px', background: 'rgba(10,10,10,0.8)' },
-                  proving: { left: '14px', top: '302px', width: '188px', height: '120px' },
+                  core: { left: '14px', top: '14px', width: '188px', height: '120px' },
+                  proving: { left: '226px', top: '14px', width: '188px', height: '120px' },
+                  load: { left: '438px', top: '14px', width: '188px', height: '120px' },
+                  surface: { left: '14px', top: '158px', width: '612px', height: '120px', background: 'rgba(10,10,10,0.8)' },
+                  archives: { left: '14px', top: '302px', width: '188px', height: '120px' },
                   transmission: { left: '226px', top: '302px', width: '188px', height: '120px' },
                   classified: { left: '438px', top: '302px', width: '188px', height: '120px' }
                 };
@@ -192,30 +192,30 @@ export default function BlueprintMap2D() {
                     <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-[#2a2a2a] group-hover:border-[#C8A84B] transition-colors"></div>
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#2a2a2a] group-hover:border-[#C8A84B] transition-colors"></div>
 
-                    {isCore && (
+                    {isWide && (
                       <div className="absolute inset-0 bg-radial-glow opacity-[0.03] pointer-events-none"></div>
                     )}
 
-                    <div className={`px-4 py-3 h-full flex flex-col justify-between relative z-10 overflow-hidden ${isCore ? 'items-center' : ''}`}>
-                      <div className={isCore ? 'w-full flex flex-col items-center text-center' : 'w-full'}>
-                        <div className={`flex items-start mb-1 ${isCore ? 'justify-center gap-3' : 'justify-between'}`}>
+                    <div className={`px-4 py-3 h-full flex flex-col justify-between relative z-10 overflow-hidden ${isWide ? 'items-center' : ''}`}>
+                      <div className={isWide ? 'w-full flex flex-col items-center text-center' : 'w-full'}>
+                        <div className={`flex items-start mb-1 ${isWide ? 'justify-center gap-3' : 'justify-between'}`}>
                           <span className="text-[12px] font-bold tracking-[0.1em] text-[#c8c2b4] group-hover:text-white transition-colors truncate">{d.name.toUpperCase()}</span>
-                          {isCore && <div className="w-2 h-2 bg-[#C8A84B] shadow-[0_0_8px_#C8A84B] mt-[3px]"></div>}
+                          {isWide && <div className="w-2 h-2 bg-[#C8A84B] shadow-[0_0_8px_#C8A84B] mt-[3px]"></div>}
                         </div>
                         <div className="text-[8px] text-[#c8c2b4] opacity-30 tracking-[0.05em] uppercase truncate">{d.code}</div>
-                        <div className={`h-px bg-[#1a1a1a] mt-2 mb-3 ${isCore ? 'w-16 mx-auto' : 'w-full'}`}></div>
+                        <div className={`h-px bg-[#1a1a1a] mt-2 mb-3 ${isWide ? 'w-16 mx-auto' : 'w-full'}`}></div>
                       </div>
 
-                      <div className={isCore ? 'w-full flex flex-col items-center space-y-1' : 'w-full space-y-1'}>
-                        <div className={isCore ? 'flex gap-8' : 'space-y-1 w-full'}>
+                      <div className={isWide ? 'w-full flex flex-col items-center space-y-1' : 'w-full space-y-1'}>
+                        <div className={isWide ? 'flex gap-8' : 'space-y-1 w-full'}>
                           {Object.entries(d.specs).slice(3).map(([key, val]) => (
-                            <div key={key} className={`flex text-[8px] tracking-widest leading-none ${isCore ? 'gap-2' : 'justify-between'}`}>
+                            <div key={key} className={`flex text-[8px] tracking-widest leading-none ${isWide ? 'gap-2' : 'justify-between'}`}>
                               <span className="text-[#444]">{key.toUpperCase()}:</span>
                               <span className={val === 'OPTIMAL' || val === 'ACTIVE' || val === 'NOMINAL_ACTIVE' ? 'text-[#C8A84B]' : 'text-[#6b6965]'}>{val}</span>
                             </div>
                           ))}
                         </div>
-                        <div className={`h-0 overflow-hidden group-hover:h-4 transition-all duration-300 mt-1 ${isCore ? 'text-center' : ''}`}>
+                        <div className={`h-0 overflow-hidden group-hover:h-4 transition-all duration-300 mt-1 ${isWide ? 'text-center' : ''}`}>
                           <span className="text-[8px] text-[#C8A84B] tracking-[0.2em] font-bold block pt-1">▶ ENTER_DISTRICT</span>
                         </div>
                       </div>
@@ -314,9 +314,9 @@ export default function BlueprintMap2D() {
                             {activeData.code}
                           </span>
                         </div>
-                        <h1 className="text-5xl font-black tracking-tighter uppercase text-[#C8A84B] mb-2">
-                          <DecipherText text={activeData.name} active={viewState === 'detail'} delay={300} speed={1.5} />
-                        </h1>
+                          <h1 className="text-5xl font-black tracking-tighter uppercase text-[#C8A84B] mb-2">
+                            <DecipherText text={activeData.name} active={viewState === 'detail'} delay={150} speed={1.5} />
+                          </h1>
                         <div className="flex items-center gap-4">
                           <span className="text-[#6b6965] tracking-[0.4em] uppercase text-xs">{activeData.code}</span>
                           <span className="h-px w-20 bg-[#1a1a1a]"></span>
@@ -338,7 +338,7 @@ export default function BlueprintMap2D() {
                             FUNCTIONAL_ANALYSIS
                           </h2>
                           <p className="text-xl leading-[1.8] text-[#a8a59b] font-light">
-                            <DecipherText text={activeData.desc} active={viewState === 'detail'} delay={600} speed={1.5} />
+                            <DecipherText text={activeData.desc} active={viewState === 'detail'} delay={300} speed={1.5} />
                           </p>
                         </section>
 
