@@ -9,13 +9,12 @@ const Silk = dynamic(() => import("@/components/Silk"), { ssr: false });
 
 export default function Home() {
   const [hasEntered, setHasEntered] = useState(false);
-  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
-    // Show the button after 2.5 seconds of intro animation
+    // Automatically transition to map after animation completes
     const timer = setTimeout(() => {
-      setShowButton(true);
-    }, 2500);
+      setHasEntered(true);
+    }, 4800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -28,8 +27,8 @@ export default function Home() {
           <motion.div
             key="intro"
             className="flex flex-col items-center justify-center min-h-screen relative w-full"
-            exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
+            exit={{ opacity: 0, scale: 1.5, filter: "blur(20px) brightness(2)" }}
+            transition={{ duration: 0.8, ease: "easeIn" }}
           >
             {/* Background Animation layer */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-100">
@@ -58,25 +57,32 @@ export default function Home() {
 
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: showButton ? 1 : 0 }}
-              transition={{ duration: 1 }}
-              className="relative z-10"
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.5 }}
+              className="relative z-10 w-full max-w-[240px] mt-4 mx-auto"
             >
-              <button
-                onClick={() => setHasEntered(true)}
-                className={`border border-[#2a2a2a] px-10 py-5 text-[12px] md:text-[14px] uppercase tracking-[0.25em] text-[#888] hover:text-[#c8c2b4] hover:border-[#c8c2b4] transition-all duration-300 ${showButton ? 'pointer-events-auto' : 'pointer-events-none'}`}
-              >
-                Enter Keld
-              </button>
+              <div className="flex justify-between text-[#6b6965] text-[10px] tracking-widest mb-3 uppercase">
+                <span>Establishing uplink</span>
+                <span className="blink">_</span>
+              </div>
+              <div className="h-[2px] w-full bg-[#1a1a1a] relative overflow-hidden">
+                <motion.div
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 2.5, delay: 2, ease: "easeInOut" }}
+                  className="absolute top-0 left-0 h-full bg-[#C8A84B] shadow-[0_0_10px_#C8A84B]"
+                />
+              </div>
             </motion.div>
           </motion.div>
         ) : (
           <motion.div
             key="map"
-            initial={{ opacity: 0, filter: "blur(10px)", scale: 1.05 }}
-            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-            className="w-full h-full"
+            initial={{ opacity: 0, filter: "blur(20px)", scale: 0.8, rotateX: 45, y: 100 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1, rotateX: 0, y: 0 }}
+            transition={{ duration: 1.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            style={{ perspective: 1200 }}
+            className="w-full h-full flex flex-col items-center justify-center"
           >
             <BlueprintMap2D />
           </motion.div>

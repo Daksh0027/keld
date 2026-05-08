@@ -135,6 +135,10 @@ html {
   }
 }
 
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
 /* Typography specifics */
 .district-label {
   letter-spacing: 0.18em;
