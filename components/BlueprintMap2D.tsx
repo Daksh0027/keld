@@ -80,7 +80,7 @@ export default function BlueprintMap2D() {
       setViewState('detail');
     }, 50);
   };
-
+  // make more changes 
   const handleBackToMap = () => {
     setViewState('map');
     // Keep the active district during transition for zoom origin
@@ -92,13 +92,13 @@ export default function BlueprintMap2D() {
   const handleSpecScroll = (e: any) => {
     const container = e.currentTarget;
     const sections = Array.from(container.querySelectorAll('section[id^="section-"]')) as HTMLElement[];
-    
+
     let currentSection = activeSection;
-    
+
     sections.forEach(section => {
       const rect = section.getBoundingClientRect();
       const containerRect = container.getBoundingClientRect();
-      
+
       if (rect.top - containerRect.top <= 300) {
         currentSection = section.id.replace('section-', '');
       }
