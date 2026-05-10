@@ -124,7 +124,7 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
     particlesRef.current = particles;
 
     function drawTextConnections() {
-      if (!ctx) return;
+      if (!ctx || isMobile) return;
       const mode = modeRef.current;
       if (mode !== 'forming' && mode !== 'formed') return;
       const tp = particles.filter(p => p.hasTarget);

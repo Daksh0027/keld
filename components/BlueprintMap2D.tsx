@@ -117,7 +117,7 @@ export default function BlueprintMap2D() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{
-              scale: 5,
+              scale: typeof window !== 'undefined' && window.innerWidth < 768 ? 2 : 5,
               opacity: 0,
               filter: "blur(20px)",
             }}
@@ -126,7 +126,7 @@ export default function BlueprintMap2D() {
               originY: activeDistrict ? (DATA[activeDistrict].pos.y + 52) / 552 : 0.5,
             }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-            className="flex flex-col items-center w-[640px] mx-auto"
+            className="flex flex-col items-center w-full max-w-[640px] px-4 md:px-0 mx-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="sr-only">Interactive city map</h2>
@@ -136,7 +136,7 @@ export default function BlueprintMap2D() {
             </div>
 
             <div
-              className="blueprint-map-area"
+              className="blueprint-map-area scale-[0.6] sm:scale-[0.8] md:scale-100 origin-top"
               id="map"
               style={{ height: '450px' }}
               onMouseMove={handleMouseMove}
@@ -287,7 +287,7 @@ export default function BlueprintMap2D() {
                     </button>
                   )}
 
-                  <div className="px-24 py-10 relative z-10">
+                  <div className="px-6 md:px-12 lg:px-24 py-10 relative z-10">
                     <header className="mb-12 border-b border-[#2a3e2f] pb-8 flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-6 text-[11px] tracking-[0.3em] uppercase">
@@ -306,15 +306,15 @@ export default function BlueprintMap2D() {
                             {activeData.code}
                           </span>
                         </div>
-                        <h1 className="text-5xl font-black tracking-tighter uppercase text-[#4eff91] mb-2">
+                        <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-[#4eff91] mb-2">
                           <DecipherText text={activeData.name} active={viewState === 'detail'} delay={150} speed={1.5} />
                         </h1>
                         <div className="flex items-center gap-4">
-                          <span className="text-[#8a9e8f] tracking-[0.4em] uppercase text-xs">{activeData.code}</span>
-                          <span className="h-px w-20 bg-[#1e2e22]"></span>
+                          <span className="text-[#8a9e8f] tracking-[0.4em] uppercase text-[10px] md:text-xs">{activeData.code}</span>
+                          <span className="h-px w-12 md:w-20 bg-[#1e2e22]"></span>
                         </div>
                       </div>
-                      <div className="text-right border-l border-[#2a3e2f] pl-8">
+                      <div className="text-right border-l border-[#2a3e2f] pl-4 md:pl-8 hidden sm:block">
                         <p className="text-[10px] text-[#8a9e8f] mb-2 tracking-widest uppercase">REGISTRY_STATUS</p>
                         <p className="text-sm font-bold uppercase text-[#4eff91] tracking-widest">
                           {activeData.specs.status}

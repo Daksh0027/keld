@@ -26,7 +26,17 @@ export default function IntroAnimation({ onSkip }: { onSkip?: () => void }) {
     canvas.height = H;
     const CX = W / 2, CY = H / 2;
 
-    const districts = [
+    const isMobile = W < 768;
+
+    const districts = isMobile ? [
+      { label: 'CORE', x: CX, y: CY, r: 5, primary: true },
+      { label: 'PRJ', x: CX - 80, y: CY - 60 },
+      { label: 'STK', x: CX + 80, y: CY - 70 },
+      { label: 'EXP', x: CX + 70, y: CY + 60 },
+      { label: 'ARC', x: CX - 70, y: CY + 70 },
+      { label: 'CRT', x: CX + 10, y: CY + 100 },
+      { label: 'CON', x: CX - 10, y: CY - 100 },
+    ] : [
       { label: 'CORE', x: CX, y: CY, r: 5, primary: true },
       { label: 'PROJECTS', x: CX - 190, y: CY - 90 },
       { label: 'STACK', x: CX + 175, y: CY - 115 },
@@ -51,7 +61,7 @@ export default function IntroAnimation({ onSkip }: { onSkip?: () => void }) {
 
     function buildLines() {
       lines = [];
-      const sp = 48;
+      const sp = isMobile ? 80 : 48;
       for (let x = 0; x <= W; x += sp) lines.push({ type: 'v', x, p: 0, delay: 200 + Math.random() * 1400, spd: 0.5 + Math.random() * 0.8 });
       for (let y = 0; y <= H; y += sp) lines.push({ type: 'h', y, p: 0, delay: 200 + Math.random() * 1400, spd: 0.5 + Math.random() * 0.8 });
     }
@@ -156,8 +166,10 @@ export default function IntroAnimation({ onSkip }: { onSkip?: () => void }) {
       });
     }
 
+    let lastCoordUpdate = 0;
     function updateCoord(elapsed: number) {
-      if (elapsed > PHASE_GRID) {
+      if (elapsed > PHASE_GRID && elapsed - lastCoordUpdate > 200) {
+        lastCoordUpdate = elapsed;
         const drift = Math.sin(elapsed * 0.001) * 0.0004;
         setCoordText(`28.6${(139 + drift).toFixed(4)}°N  77.2${(89 + drift * 0.7).toFixed(4)}°E`);
         setShowCoord(true);
@@ -243,10 +255,10 @@ export default function IntroAnimation({ onSkip }: { onSkip?: () => void }) {
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 w-full h-[78px] -translate-x-1/2 -translate-y-[44px]">
-          <div className={`absolute right-1/2 pr-6 top-0 font-mono text-[78px] font-bold text-white tracking-[-4px] leading-none transition-all duration-1000 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]'}`}>ARCH</div>
-          <div className={`absolute left-1/2 pl-6 top-0 font-mono text-[78px] font-bold text-[#4eff91] tracking-[-4px] leading-none transition-all duration-1000 delay-200 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]'}`}>ZERO</div>
+          <div className={`absolute right-1/2 pr-6 top-0 font-mono text-[clamp(40px,15vw,78px)] font-bold text-white tracking-[-4px] leading-none transition-all duration-1000 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]'}`}>ARCH</div>
+          <div className={`absolute left-1/2 pl-6 top-0 font-mono text-[clamp(40px,15vw,78px)] font-bold text-[#4eff91] tracking-[-4px] leading-none transition-all duration-1000 delay-200 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]'}`}>ZERO</div>
         </div>
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 mt-[45px] font-mono text-[10px] text-[#2a5c35] tracking-[5px] uppercase transition-opacity duration-800 delay-500 whitespace-nowrap ${showTitle ? 'opacity-100' : 'opacity-0'}`}>Precision · Systems · Architecture</div>
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 mt-[45px] font-mono text-[9px] md:text-[10px] text-[#2a5c35] tracking-[3px] md:tracking-[5px] uppercase transition-opacity duration-800 delay-500 whitespace-nowrap ${showTitle ? 'opacity-100' : 'opacity-0'}`}>Precision · Systems · Architecture</div>
       </div>
       <div className={`absolute top-6 right-8 font-mono text-[9px] text-[#1e3824] tracking-[2px] transition-opacity duration-600 ${showCoord ? 'opacity-100' : 'opacity-0'}`}>
         {coordText}

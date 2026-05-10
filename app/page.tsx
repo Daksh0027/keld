@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
 
-const Silk = dynamic(() => import("@/components/Silk"), { ssr: false });
+
 import IntroAnimation from '@/components/IntroAnimation';
 import ParticleField from '@/components/ParticleField';
 
@@ -14,7 +14,7 @@ const AnimatedHeroName = ({ hasEntered }: { hasEntered: boolean }) => {
 
   useEffect(() => {
     if (!hasEntered) return;
-    
+
     // Initial delay before starting the scan
     const startTimer = setTimeout(() => {
       setScanPos(0);
@@ -35,13 +35,13 @@ const AnimatedHeroName = ({ hasEntered }: { hasEntered: boolean }) => {
   return (
     <h1 className="hero-name">
       {scanPos >= 0 && scanPos <= 5 ? (
-        <>{ "DAKSH".slice(0, scanPos) }<span className="text-[var(--accent)]">_</span>{ "DAKSH".slice(scanPos) }</>
+        <>{"DAKSH".slice(0, scanPos)}<span className="text-[var(--accent)]">_</span>{"DAKSH".slice(scanPos)}</>
       ) : (
         "DAKSH"
       )}
-      <br/>
+      <br />
       {scanPos >= 6 && scanPos <= 13 ? (
-        <>{ "SHASTRI".slice(0, scanPos - 6) }<span className="text-[var(--accent)]">_</span>{ "SHASTRI".slice(scanPos - 6) }</>
+        <>{"SHASTRI".slice(0, scanPos - 6)}<span className="text-[var(--accent)]">_</span>{"SHASTRI".slice(scanPos - 6)}</>
       ) : (
         "SHASTRI"
       )}
@@ -87,7 +87,7 @@ export default function Portfolio() {
 
   useEffect(() => {
     if (!hasEntered) return;
-    
+
     let io: IntersectionObserver;
     let secIO: IntersectionObserver;
     let initTimer: NodeJS.Timeout;
@@ -99,25 +99,25 @@ export default function Portfolio() {
         return;
       }
 
-      const sections = ['#hero','#about','#experience','#projects','#stack','#education','#certs','#contact'];
+      const sections = ['#hero', '#about', '#experience', '#projects', '#stack', '#education', '#certs', '#contact'];
       const dots = document.querySelectorAll('.nav-link');
       const mapBtn = document.getElementById('map-btn');
 
       io = new IntersectionObserver(entries => {
         entries.forEach(e => {
-          if(e.isIntersecting){
+          if (e.isIntersecting) {
             e.target.classList.add('visible');
           }
         });
-      }, {threshold: 0.1});
-      
+      }, { threshold: 0.1 });
+
       fadeElements.forEach(el => io.observe(el));
 
       secIO = new IntersectionObserver(entries => {
         entries.forEach(e => {
-          if(e.isIntersecting){
+          if (e.isIntersecting) {
             const idx = sections.indexOf('#' + e.target.id);
-            if(idx >= 0) {
+            if (idx >= 0) {
               dots.forEach((d, i) => d.classList.toggle('active', i === idx));
               // Update active section for particle text effect
               // Map section IDs to display names; skip home section
@@ -131,8 +131,8 @@ export default function Portfolio() {
             }
           }
         });
-      }, {threshold: 0.4});
-      
+      }, { threshold: 0.4 });
+
       sections.forEach(s => {
         const el = document.querySelector(s);
         if (el) secIO.observe(el);
@@ -144,7 +144,7 @@ export default function Portfolio() {
         }
       };
 
-      window.addEventListener('scroll', handleScroll, {passive: true});
+      window.addEventListener('scroll', handleScroll, { passive: true });
       (window as any)._appScrollHandler = handleScroll;
     };
 
@@ -167,12 +167,12 @@ export default function Portfolio() {
   };
 
   const scrollTo = (id: string) => {
-    document.querySelector(id)?.scrollIntoView({behavior: 'smooth'});
+    document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <>
-    <ParticleField activeSection={activeSection} />
+    {hasEntered && <ParticleField activeSection={activeSection} />}
     <AnimatePresence mode="wait">
       {!hasEntered ? (
         <motion.div
@@ -193,7 +193,8 @@ export default function Portfolio() {
           transition={{ duration: 0.5 }}
           className="w-full relative"
         >
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600&display=swap');
             * { margin:0; padding:0; box-sizing:border-box; }
             :root {
@@ -365,14 +366,20 @@ export default function Portfolio() {
             .fade-in.visible { opacity:1; transform:translateY(0); }
 
             @media(max-width:600px){
-              #hero,#about,#experience,#projects,#stack,#education,#certs,#contact { padding:3rem 1.5rem; }
+              #hero,#about,#experience,#projects,#stack,#education,#certs,#contact { padding:4rem 1.25rem; }
               .proj-grid,.certs-grid,.contact-grid { grid-template-columns:1fr; }
-              .hero-name { font-size:2.5rem; }
-              #top-nav { gap:1rem; overflow-x:auto; padding:0 1rem; justify-content:flex-start; }
-              .nav-link { white-space:nowrap; }
+              .hero-name { font-size:clamp(2.2rem, 12vw, 4rem); letter-spacing:-1px; }
+              #top-nav { gap:1.25rem; overflow-x:auto; padding:0 1.25rem; justify-content:flex-start; scrollbar-width: none; }
+              #top-nav::-webkit-scrollbar { display: none; }
+              .nav-link { white-space:nowrap; font-size: 10px; }
+              .hero-tag { font-size: 9px; margin-bottom: 1.5rem; }
+              .hero-sub { font-size: 0.95rem; }
+              .status-row { gap: 1.25rem; }
+              .contact-tagline { font-size: 1.5rem; }
+              .sec-title { font-size: 1.25rem; }
             }
           `}} />
-          
+
           <nav id="top-nav">
             <div className="nav-link active" onClick={() => scrollTo('#hero')} title="Home">HOME</div>
             <div className="nav-link" onClick={() => scrollTo('#about')} title="About">ABOUT</div>
@@ -397,292 +404,292 @@ export default function Portfolio() {
             className="w-full relative"
           >
             {/* HERO */}
-      <section id="hero">
-        <div className="hero-tag">Portfolio · v2025</div>
-        <AnimatedHeroName hasEntered={hasEntered} />
-        <p className="hero-sub">Full-stack engineer and competitive programmer building load-bearing systems. Based in Delhi.</p>
-        <div className="status-row">
-          <div className="stat"><span className="stat-label">Status</span><span className="stat-val green">● Active</span></div>
-          <div className="stat"><span className="stat-label">Role</span><span className="stat-val">Frontend Dev Intern</span></div>
-          <div className="stat"><span className="stat-label">Rank</span><span className="stat-val">CF Pupil</span></div>
-          <div className="stat"><span className="stat-label">Location</span><span className="stat-val">Delhi, India</span></div>
-        </div>
-        <div className="stat-label" style={{marginBottom:'0.75rem'}}>Hobbies</div>
-        <div className="hero-chips">
-          <div className="chip">Gaming</div>
-          <div className="chip">Music</div>
-          <div className="chip">Reading</div>
-          <div className="chip">Swimming</div>
-          <div className="chip">PenTesting</div>
-          <div className="chip">Cracking</div>
-        </div>
-        <div className="hero-scroll" onClick={() => scrollTo('#about')}>
-          <div className="scroll-line"></div>
-          Scroll to explore
-        </div>
-      </section>
-
-      {/* ABOUT */}
-      <section id="about">
-        <div className="sec-header fade-in">
-          <span className="sec-code">01 · CORE</span>
-          <h2 className="sec-title">The Operator</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="about-content fade-in">
-          <div className="about-text">
-            <p>Information Technology undergraduate at <strong>Bhagwan Parshuram Institute of Technology</strong> and an active competitive programmer based in Delhi.</p>
-            <p>Currently working as a <strong>Front-End Development Intern</strong> at Shree Ji Facility Services, bridging the gap between algorithmic problem-solving and full-stack application architecture.</p>
-            <p>Seeking to apply a diverse skill set spanning <strong>React, Node.js, and C++</strong> to solve complex technical challenges, contribute to impactful projects, and continually level up as a software engineer.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* EXPERIENCE */}
-      <section id="experience">
-        <div className="sec-header fade-in">
-          <span className="sec-code">02 · SURFACE</span>
-          <h2 className="sec-title">Operational History</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="fade-in">
-          <div className="exp-card">
-            <div className="exp-top">
-              <span className="exp-title">Front End Development Intern</span>
-              <span className="exp-date">May 2026 – Present</span>
-            </div>
-            <div className="exp-company">SHREE JI FACILITY SERVICES · Delhi</div>
-            <div className="exp-desc">Building and maintaining frontend systems. Bridging algorithmic problem-solving with real-world full-stack application architecture in a professional environment.</div>
-          </div>
-        </div>
-      </section>
-
-      {/* PROJECTS */}
-      <section id="projects">
-        <div className="sec-header fade-in">
-          <span className="sec-code">03 · PROVING</span>
-          <h2 className="sec-title">Classified Research</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="proj-grid fade-in">
-          <div className="proj-card" onClick={() => window.open('https://respectro.vercel.app/', '_blank')}>
-            <div className="proj-corner"></div>
-            <div className="proj-num">PRJ-001</div>
-            <div className="proj-date">Aug 2025 – Feb 2026</div>
-            <div className="proj-name">ReSpectro · Movie Streaming Platform</div>
-            <div className="proj-desc">A responsive movie and TV series discovery app built in React and Vite. Integrated with TMDB API for real-time data, Clerk for user authentication, and Appwrite as backend for personalization tracking.</div>
-            <div className="proj-tags">
-              <span className="proj-tag">React</span><span className="proj-tag">Vite</span><span className="proj-tag">Appwrite</span><span className="proj-tag">TMDB API</span>
-            </div>
-            <a className="proj-link" href="https://respectro.vercel.app/" target="_blank" rel="noopener noreferrer">→ Live Demo</a>
-          </div>
-          <div className="proj-card" onClick={() => window.open('https://bot-clone.netlify.app/', '_blank')}>
-            <div className="proj-corner"></div>
-            <div className="proj-num">PRJ-002</div>
-            <div className="proj-date">Feb 2025 – Present</div>
-            <div className="proj-name">Gemini Clone · AI Agent</div>
-            <div className="proj-desc">A frontend clone of Google Gemini's UI with clean design and full responsiveness. Actually usable — powered by Gemini's API. Built in React with minimal but polished CSS.</div>
-            <div className="proj-tags">
-              <span className="proj-tag">React</span><span className="proj-tag">Gemini API</span><span className="proj-tag">CSS</span>
-            </div>
-            <a className="proj-link" href="https://bot-clone.netlify.app/" target="_blank" rel="noopener noreferrer">→ Live Demo</a>
-          </div>
-          <div className="proj-card">
-            <div className="proj-corner"></div>
-            <div className="proj-num">PRJ-003</div>
-            <div className="proj-date">Jan 2024 – Feb 2024</div>
-            <div className="proj-name">Library Management System</div>
-            <div className="proj-desc">A fully scalable library management system in Python. Manages inventory and sales records for a store with an inbuilt command-line UI. Integrated with MySQL for persistent data storage.</div>
-            <div className="proj-tags">
-              <span className="proj-tag">Python</span><span className="proj-tag">MySQL</span><span className="proj-tag">CLI</span>
-            </div>
-          </div>
-          <div className="proj-card" style={{background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '200px'}}>
-            <div style={{textAlign: 'center'}}>
-              <div style={{fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '3px', marginBottom: '8px'}}>STATUS</div>
-              <div style={{fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--accent)'}}>More incoming_</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* STACK */}
-      <section id="stack">
-        <div className="sec-header fade-in">
-          <span className="sec-code">04 · LOAD</span>
-          <h2 className="sec-title">Core Competencies</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="stack-grid fade-in">
-          <div className="stack-block">
-            <div className="stack-cat">Languages</div>
-            <div className="stack-items">
-              <span className="stack-item">C++</span>
-              <span className="stack-item">C</span>
-              <span className="stack-item">C#</span>
-              <span className="stack-item">Python</span>
-              <span className="stack-item">JavaScript</span>
-            </div>
-          </div>
-          <div className="stack-block">
-            <div className="stack-cat">Frontend</div>
-            <div className="stack-items">
-              <span className="stack-item">HTML &amp; CSS</span>
-              <span className="stack-item">Tailwind CSS</span>
-              <span className="stack-item">React</span>
-              <span className="stack-item">Vite</span>
-            </div>
-          </div>
-          <div className="stack-block">
-            <div className="stack-cat">Backend</div>
-            <div className="stack-items">
-              <span className="stack-item">Node.js</span>
-              <span className="stack-item">Django</span>
-              <span className="stack-item">Flask</span>
-            </div>
-          </div>
-          <div className="stack-block">
-            <div className="stack-cat">Database</div>
-            <div className="stack-items">
-              <span className="stack-item">MySQL</span>
-              <span className="stack-item">PL/SQL</span>
-              <span className="stack-item">Appwrite</span>
-            </div>
-          </div>
-          <div className="stack-block">
-            <div className="stack-cat">Tools &amp; DevOps</div>
-            <div className="stack-items">
-              <span className="stack-item">GitHub</span>
-              <span className="stack-item">Vercel</span>
-              <span className="stack-item">Netlify</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* EDUCATION */}
-      <section id="education">
-        <div className="sec-header fade-in">
-          <span className="sec-code">05 · ARCHIVES</span>
-          <h2 className="sec-title">Academic History</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="edu-list fade-in">
-          <div className="edu-row">
-            <span className="edu-year">2024–28</span>
-            <div className="edu-content">
-              <div className="edu-title">B.Tech, Information Technology</div>
-              <div className="edu-sub">Bhagwan Parshuram Institute of Technology</div>
-            </div>
-          </div>
-          <div className="edu-row">
-            <span className="edu-year">2024</span>
-            <div className="edu-content">
-              <div className="edu-title">Senior Secondary (XII) · Science</div>
-              <div className="edu-sub">St. Joseph's Academy (CBSE)</div>
-              <div className="edu-extra">81.60%</div>
-            </div>
-          </div>
-          <div className="edu-row">
-            <span className="edu-year">2022</span>
-            <div className="edu-content">
-              <div className="edu-title">Secondary (X)</div>
-              <div className="edu-sub">St. Joseph's Academy (CBSE)</div>
-              <div className="edu-extra">91.20%</div>
-            </div>
-          </div>
-          <div className="edu-row">
-            <span className="edu-year">Ongoing</span>
-            <div className="edu-content">
-              <div className="edu-title">Public Relations Associate</div>
-              <div className="edu-sub">College Society</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CERTIFICATIONS */}
-      <section id="certs">
-        <div className="sec-header fade-in">
-          <span className="sec-code">06 · TRANSMISSION</span>
-          <h2 className="sec-title">Issued Credentials</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="certs-grid fade-in">
-          <div>
-            <div className="col-title">Certificates</div>
-            <div className="cert-item">
-              <div className="cert-title">Complete IP Addressing &amp; Subnetting</div>
-              <div className="cert-sub">GeeksforGeeks · Online</div>
-              <div className="cert-date">Jun 2025</div>
-            </div>
-          </div>
-          <div>
-            <div className="col-title">Competitive Achievements</div>
-            <ul className="bullets-list">
-              <li>Ranked 222 in LeetCode Weekly Contest 451</li>
-              <li>Global Rank 295 in CodeChef Starters 190</li>
-              <li>Ranked Pupil on Codeforces</li>
-              <li>Participated in SIH'24 · Qualified to Mentor Round</li>
-              <li>Placed 13th in Cyber Security CTF at MAIT</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* CONTACT */}
-      <section id="contact">
-        <div className="sec-header fade-in">
-          <span className="sec-code">07 · CLASSIFIED</span>
-          <h2 className="sec-title">Open Uplink</h2>
-          <div className="sec-line"></div>
-        </div>
-        <div className="contact-grid fade-in">
-          <div>
-            <div className="contact-tagline">Let's build<br/><span>something.</span></div>
-            <p className="contact-sub">Open to internships, projects, and full-time roles. Based in Delhi — available remotely.</p>
-          </div>
-          <div className="contact-links">
-            <a className="contact-link" href="mailto:dakshshastri0627@gmail.com">
-              <div>
-                <div className="contact-link-label">Email</div>
-                <div className="contact-link-url">dakshshastri0627@gmail.com</div>
+            <section id="hero">
+              <div className="hero-tag">Portfolio · v2025</div>
+              <AnimatedHeroName hasEntered={hasEntered} />
+              <p className="hero-sub">Full-stack engineer and competitive programmer building load-bearing systems. Based in Delhi.</p>
+              <div className="status-row">
+                <div className="stat"><span className="stat-label">Status</span><span className="stat-val green">● Active</span></div>
+                <div className="stat"><span className="stat-label">Role</span><span className="stat-val">Frontend Dev Intern</span></div>
+                <div className="stat"><span className="stat-label">Rank</span><span className="stat-val">CF Pupil</span></div>
+                <div className="stat"><span className="stat-label">Location</span><span className="stat-val">Delhi, India</span></div>
               </div>
-              <span className="contact-arr">↗</span>
-            </a>
-            <a className="contact-link" href="https://github.com/Daksh0027" target="_blank" rel="noopener noreferrer">
-              <div>
-                <div className="contact-link-label">GitHub</div>
-                <div className="contact-link-url">Daksh0027</div>
+              <div className="stat-label" style={{ marginBottom: '0.75rem' }}>Hobbies</div>
+              <div className="hero-chips">
+                <div className="chip">Gaming</div>
+                <div className="chip">Music</div>
+                <div className="chip">Reading</div>
+                <div className="chip">Swimming</div>
+                <div className="chip">PenTesting</div>
+                <div className="chip">Cracking</div>
               </div>
-              <span className="contact-arr">↗</span>
-            </a>
-            <a className="contact-link" href="https://leetcode.com/u/Daksh0027" target="_blank" rel="noopener noreferrer">
-              <div>
-                <div className="contact-link-label">LeetCode</div>
-                <div className="contact-link-url">Daksh0027</div>
+              <div className="hero-scroll" onClick={() => scrollTo('#about')}>
+                <div className="scroll-line"></div>
+                Scroll to explore
               </div>
-              <span className="contact-arr">↗</span>
-            </a>
-            <a className="contact-link" href="https://www.codechef.com/users/gam_pearl_90" target="_blank" rel="noopener noreferrer">
-              <div>
-                <div className="contact-link-label">CodeChef</div>
-                <div className="contact-link-url">gam_pearl_90</div>
+            </section>
+
+            {/* ABOUT */}
+            <section id="about">
+              <div className="sec-header fade-in">
+                <span className="sec-code">01 · CORE</span>
+                <h2 className="sec-title">The Operator</h2>
+                <div className="sec-line"></div>
               </div>
-              <span className="contact-arr">↗</span>
-            </a>
-          </div>
-        </div>
-        <div style={{marginTop: '5rem', paddingTop: '2rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem'}}>
-          <span style={{fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px'}}>CITY OF CONSTRUCTED SYSTEMS</span>
-          <span style={{fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px'}}>DAKSH SHASTRI · 2025</span>
-        </div>
-      </section>
+              <div className="about-content fade-in">
+                <div className="about-text">
+                  <p>Information Technology undergraduate at <strong>Bhagwan Parshuram Institute of Technology</strong> and an active competitive programmer based in Delhi.</p>
+                  <p>Currently working as a <strong>Front-End Development Intern</strong> at Shree Ji Facility Services, bridging the gap between algorithmic problem-solving and full-stack application architecture.</p>
+                  <p>Seeking to apply a diverse skill set spanning <strong>React, Node.js, and C++</strong> to solve complex technical challenges, contribute to impactful projects, and continually level up as a software engineer.</p>
+                </div>
+              </div>
+            </section>
+
+            {/* EXPERIENCE */}
+            <section id="experience">
+              <div className="sec-header fade-in">
+                <span className="sec-code">02 · SURFACE</span>
+                <h2 className="sec-title">Operational History</h2>
+                <div className="sec-line"></div>
+              </div>
+              <div className="fade-in">
+                <div className="exp-card">
+                  <div className="exp-top">
+                    <span className="exp-title">Front End Development Intern</span>
+                    <span className="exp-date">May 2026 – Present</span>
+                  </div>
+                  <div className="exp-company">SHREE JI FACILITY SERVICES · Delhi</div>
+                  <div className="exp-desc">Building and maintaining frontend systems. Bridging algorithmic problem-solving with real-world full-stack application architecture in a professional environment.</div>
+                </div>
+              </div>
+            </section>
+
+            {/* PROJECTS */}
+            <section id="projects">
+              <div className="sec-header fade-in">
+                <span className="sec-code">03 · PROVING</span>
+                <h2 className="sec-title">Classified Research</h2>
+                <div className="sec-line"></div>
+              </div>
+              <div className="proj-grid fade-in">
+                <div className="proj-card" onClick={() => window.open('https://respectro.vercel.app/', '_blank')}>
+                  <div className="proj-corner"></div>
+                  <div className="proj-num">PRJ-001</div>
+                  <div className="proj-date">Aug 2025 – Feb 2026</div>
+                  <div className="proj-name">ReSpectro · Movie Streaming Platform</div>
+                  <div className="proj-desc">A responsive movie and TV series discovery app built in React and Vite. Integrated with TMDB API for real-time data, Clerk for user authentication, and Appwrite as backend for personalization tracking.</div>
+                  <div className="proj-tags">
+                    <span className="proj-tag">React</span><span className="proj-tag">Vite</span><span className="proj-tag">Appwrite</span><span className="proj-tag">TMDB API</span>
+                  </div>
+                  <a className="proj-link" href="https://respectro.vercel.app/" target="_blank" rel="noopener noreferrer">→ Live Demo</a>
+                </div>
+                <div className="proj-card" onClick={() => window.open('https://bot-clone.netlify.app/', '_blank')}>
+                  <div className="proj-corner"></div>
+                  <div className="proj-num">PRJ-002</div>
+                  <div className="proj-date">Feb 2025 – Present</div>
+                  <div className="proj-name">Gemini Clone · AI Agent</div>
+                  <div className="proj-desc">A frontend clone of Google Gemini's UI with clean design and full responsiveness. Actually usable — powered by Gemini's API. Built in React with minimal but polished CSS.</div>
+                  <div className="proj-tags">
+                    <span className="proj-tag">React</span><span className="proj-tag">Gemini API</span><span className="proj-tag">CSS</span>
+                  </div>
+                  <a className="proj-link" href="https://bot-clone.netlify.app/" target="_blank" rel="noopener noreferrer">→ Live Demo</a>
+                </div>
+                <div className="proj-card">
+                  <div className="proj-corner"></div>
+                  <div className="proj-num">PRJ-003</div>
+                  <div className="proj-date">Jan 2024 – Feb 2024</div>
+                  <div className="proj-name">Library Management System</div>
+                  <div className="proj-desc">A fully scalable library management system in Python. Manages inventory and sales records for a store with an inbuilt command-line UI. Integrated with MySQL for persistent data storage.</div>
+                  <div className="proj-tags">
+                    <span className="proj-tag">Python</span><span className="proj-tag">MySQL</span><span className="proj-tag">CLI</span>
+                  </div>
+                </div>
+                <div className="proj-card" style={{ background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '3px', marginBottom: '8px' }}>STATUS</div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--accent)' }}>More incoming_</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* STACK */}
+            <section id="stack">
+              <div className="sec-header fade-in">
+                <span className="sec-code">04 · LOAD</span>
+                <h2 className="sec-title">Core Competencies</h2>
+                <div className="sec-line"></div>
+              </div>
+              <div className="stack-grid fade-in">
+                <div className="stack-block">
+                  <div className="stack-cat">Languages</div>
+                  <div className="stack-items">
+                    <span className="stack-item">C++</span>
+                    <span className="stack-item">C</span>
+                    <span className="stack-item">C#</span>
+                    <span className="stack-item">Python</span>
+                    <span className="stack-item">JavaScript</span>
+                  </div>
+                </div>
+                <div className="stack-block">
+                  <div className="stack-cat">Frontend</div>
+                  <div className="stack-items">
+                    <span className="stack-item">HTML &amp; CSS</span>
+                    <span className="stack-item">Tailwind CSS</span>
+                    <span className="stack-item">React</span>
+                    <span className="stack-item">Vite</span>
+                  </div>
+                </div>
+                <div className="stack-block">
+                  <div className="stack-cat">Backend</div>
+                  <div className="stack-items">
+                    <span className="stack-item">Node.js</span>
+                    <span className="stack-item">Django</span>
+                    <span className="stack-item">Flask</span>
+                  </div>
+                </div>
+                <div className="stack-block">
+                  <div className="stack-cat">Database</div>
+                  <div className="stack-items">
+                    <span className="stack-item">MySQL</span>
+                    <span className="stack-item">PL/SQL</span>
+                    <span className="stack-item">Appwrite</span>
+                  </div>
+                </div>
+                <div className="stack-block">
+                  <div className="stack-cat">Tools &amp; DevOps</div>
+                  <div className="stack-items">
+                    <span className="stack-item">GitHub</span>
+                    <span className="stack-item">Vercel</span>
+                    <span className="stack-item">Netlify</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* EDUCATION */}
+            <section id="education">
+              <div className="sec-header fade-in">
+                <span className="sec-code">05 · ARCHIVES</span>
+                <h2 className="sec-title">Academic History</h2>
+                <div className="sec-line"></div>
+              </div>
+              <div className="edu-list fade-in">
+                <div className="edu-row">
+                  <span className="edu-year">2024–28</span>
+                  <div className="edu-content">
+                    <div className="edu-title">B.Tech, Information Technology</div>
+                    <div className="edu-sub">Bhagwan Parshuram Institute of Technology</div>
+                  </div>
+                </div>
+                <div className="edu-row">
+                  <span className="edu-year">2024</span>
+                  <div className="edu-content">
+                    <div className="edu-title">Senior Secondary (XII) · Science</div>
+                    <div className="edu-sub">St. Joseph's Academy (CBSE)</div>
+                    <div className="edu-extra">81.60%</div>
+                  </div>
+                </div>
+                <div className="edu-row">
+                  <span className="edu-year">2022</span>
+                  <div className="edu-content">
+                    <div className="edu-title">Secondary (X)</div>
+                    <div className="edu-sub">St. Joseph's Academy (CBSE)</div>
+                    <div className="edu-extra">91.20%</div>
+                  </div>
+                </div>
+                <div className="edu-row">
+                  <span className="edu-year">Ongoing</span>
+                  <div className="edu-content">
+                    <div className="edu-title">Public Relations Associate</div>
+                    <div className="edu-sub">College Society</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CERTIFICATIONS */}
+            <section id="certs">
+              <div className="sec-header fade-in">
+                <span className="sec-code">06 · TRANSMISSION</span>
+                <h2 className="sec-title">Issued Credentials</h2>
+                <div className="sec-line"></div>
+              </div>
+              <div className="certs-grid fade-in">
+                <div>
+                  <div className="col-title">Certificates</div>
+                  <div className="cert-item">
+                    <div className="cert-title">Complete IP Addressing &amp; Subnetting</div>
+                    <div className="cert-sub">GeeksforGeeks · Online</div>
+                    <div className="cert-date">Jun 2025</div>
+                  </div>
+                </div>
+                <div>
+                  <div className="col-title">Competitive Achievements</div>
+                  <ul className="bullets-list">
+                    <li>Ranked 222 in LeetCode Weekly Contest 451</li>
+                    <li>Global Rank 295 in CodeChef Starters 190</li>
+                    <li>Ranked Pupil on Codeforces</li>
+                    <li>Participated in SIH'24 · Qualified to Mentor Round</li>
+                    <li>Placed 13th in Cyber Security CTF at MAIT</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            {/* CONTACT */}
+            <section id="contact">
+              <div className="sec-header fade-in">
+                <span className="sec-code">07 · CLASSIFIED</span>
+                <h2 className="sec-title">Open Uplink</h2>
+                <div className="sec-line"></div>
+              </div>
+              <div className="contact-grid fade-in">
+                <div>
+                  <div className="contact-tagline">Let's build<br /><span>something.</span></div>
+                  <p className="contact-sub">Open to internships, projects, and full-time roles. Based in Delhi — available remotely.</p>
+                </div>
+                <div className="contact-links">
+                  <a className="contact-link" href="mailto:dakshshastri0627@gmail.com">
+                    <div>
+                      <div className="contact-link-label">Email</div>
+                      <div className="contact-link-url">dakshshastri0627@gmail.com</div>
+                    </div>
+                    <span className="contact-arr">↗</span>
+                  </a>
+                  <a className="contact-link" href="https://github.com/Daksh0027" target="_blank" rel="noopener noreferrer">
+                    <div>
+                      <div className="contact-link-label">GitHub</div>
+                      <div className="contact-link-url">Daksh0027</div>
+                    </div>
+                    <span className="contact-arr">↗</span>
+                  </a>
+                  <a className="contact-link" href="https://leetcode.com/u/Daksh0027" target="_blank" rel="noopener noreferrer">
+                    <div>
+                      <div className="contact-link-label">LeetCode</div>
+                      <div className="contact-link-url">Daksh0027</div>
+                    </div>
+                    <span className="contact-arr">↗</span>
+                  </a>
+                  <a className="contact-link" href="https://www.codechef.com/users/gam_pearl_90" target="_blank" rel="noopener noreferrer">
+                    <div>
+                      <div className="contact-link-label">CodeChef</div>
+                      <div className="contact-link-url">gam_pearl_90</div>
+                    </div>
+                    <span className="contact-arr">↗</span>
+                  </a>
+                </div>
+              </div>
+              <div style={{ marginTop: '5rem', paddingTop: '2rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px' }}>CITY OF CONSTRUCTED SYSTEMS</span>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px' }}>DAKSH SHASTRI · 2025</span>
+              </div>
+            </section>
           </motion.div>
         </motion.div>
       )}
-      </AnimatePresence>
-      <div className="fixed bottom-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-t from-[#050a06]/80 to-transparent backdrop-blur-[1px] z-[100]" />
-    </>
+    </AnimatePresence>
+    <div className="fixed bottom-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-t from-[#050a06]/80 to-transparent backdrop-blur-[1px] z-[100]" />
+  </>
   );
 }
