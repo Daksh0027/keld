@@ -31,7 +31,9 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
     };
     resize();
 
-    const N = 700;
+    const isMobile = window.innerWidth < 768;
+
+    const N = isMobile ? 300 : 700;
     let mouse = { x: 0, y: 0, active: false };
 
     class Particle {
@@ -74,12 +76,12 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
       update(t: number) {
         const mode = modeRef.current;
 
-        // Mouse repulsion
+        // Mouse repulsion (desktop only)
         const dx = this.x - mouse.x;
         const dy = this.y - mouse.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const radius = 160;
-        if (mouse.active && dist > 0 && dist < radius) {
+        if (!isMobile && mouse.active && dist > 0 && dist < radius) {
           const force = (1 - dist / radius) * 2.2;
           this.vx += (dx / dist) * force * 0.5;
           this.vy += (dy / dist) * force * 0.5;
@@ -93,13 +95,17 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
           this.vy += tyDiff * 0.06;
           this.vx *= 0.72;
           this.vy *= 0.72;
-        } else {
-          // Free drift
+        } else if (!isMobile) {
+          // Free drift — desktop only
           this.vx *= 0.9;
           this.vy *= 0.9;
           const wave = Math.sin(t * this.speed + this.offset) * 1.2;
           this.x += this.driftX;
           this.y += this.driftY + wave * 0.1;
+        } else {
+          // Mobile: no drift, just dampen velocity
+          this.vx *= 0.8;
+          this.vy *= 0.8;
         }
 
         this.x += this.vx;
@@ -183,7 +189,7 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
       ctx.clearRect(0, 0, W, H);
       t++;
       particles.forEach(p => { p.update(t); p.draw(); });
-      if (mouse.active) drawMouseConnections();
+      if (!isMobile && mouse.active) drawMouseConnections();
       drawTextConnections();
       animId = requestAnimationFrame(loop);
     };
