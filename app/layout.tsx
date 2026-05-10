@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
     type: 'website',
   },
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
