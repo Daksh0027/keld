@@ -55,11 +55,10 @@ function DecipherText({ text, active, delay = 0, speed = 1, className = "" }: { 
 }
 
 export default function BlueprintMap2D() {
-  const [viewState, setViewState] = useState<'map' | 'detail' | 'full-spec'>('map');
+  const [viewState, setViewState] = useState<'map' | 'detail'>('map');
   const [activeDistrict, setActiveDistrict] = useState<DistrictID | null>(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [zoomOrigin, setZoomOrigin] = useState({ x: 0.5, y: 0.5 });
-  const [activeSection, setActiveSection] = useState<string>('core');
   const mapRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -80,33 +79,13 @@ export default function BlueprintMap2D() {
       setViewState('detail');
     }, 50);
   };
-  // make more changes 
+
   const handleBackToMap = () => {
     setViewState('map');
     // Keep the active district during transition for zoom origin
     setTimeout(() => {
       setActiveDistrict(null);
     }, 500);
-  };
-
-  const handleSpecScroll = (e: any) => {
-    const container = e.currentTarget;
-    const sections = Array.from(container.querySelectorAll('section[id^="section-"]')) as HTMLElement[];
-
-    let currentSection = activeSection;
-
-    sections.forEach(section => {
-      const rect = section.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-
-      if (rect.top - containerRect.top <= 300) {
-        currentSection = section.id.replace('section-', '');
-      }
-    });
-
-    if (currentSection !== activeSection) {
-      setActiveSection(currentSection);
-    }
   };
 
   const activeData = activeDistrict ? DATA[activeDistrict] : null;
@@ -255,12 +234,6 @@ export default function BlueprintMap2D() {
               <p className="blueprint-status-bar !m-0 !text-[11px] !p-0 border-none">
                 SYSTEM_READY · <span className="text-[#C8A84B]">LIVE<span className="blink">█</span></span>
               </p>
-              <button
-                className="text-[10px] tracking-[0.4em] text-[#6b6965] hover:text-[#C8A84B] transition-all flex items-center gap-2 border border-[#1a1a1a] px-6 py-2 bg-black/50"
-                onClick={() => setViewState('full-spec')}
-              >
-                FULL SPEC <span className="opacity-30">→</span>
-              </button>
             </div>
           </motion.div>
         ) : viewState === 'detail' ? (
@@ -472,145 +445,6 @@ export default function BlueprintMap2D() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
-        ) : viewState === 'full-spec' ? (
-          <motion.div
-            key="full-spec-view"
-            initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: 50, filter: "blur(10px)" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto bg-[#050505] border border-[#2a2a2a] relative z-50 overflow-hidden h-[85vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="absolute inset-0 opacity-[0.02] pointer-events-none noise-bg" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' }}></div>
-
-            <header className="sticky top-0 z-20 bg-[#050505]/90 backdrop-blur-md border-b border-[#2a2a2a] px-8 py-6 flex justify-between items-center">
-              <div>
-                <h2 className="text-[#C8A84B] tracking-[0.4em] font-bold text-lg uppercase">FULL_SPEC_MODE</h2>
-                <p className="text-[10px] text-[#6b6965] tracking-widest uppercase mt-1">ALL SYSTEMS ACTIVE</p>
-              </div>
-              <button
-                onClick={() => setViewState('map')}
-                className="text-[#6b6965] hover:text-[#C8A84B] transition-colors flex items-center gap-2 border border-[#1a1a1a] px-4 py-2 bg-black"
-              >
-                <span className="text-lg leading-none -mt-[2px] opacity-50">◂</span> RETURN TO MAP
-              </button>
-            </header>
-
-            <div className="flex-1 relative z-10 flex gap-12 max-w-6xl mx-auto w-full px-8 md:px-12 overflow-hidden">
-
-              {/* Left Sidebar Table of Contents */}
-              <div className="hidden lg:block w-48 shrink-0 py-12">
-                <div className="space-y-4">
-                  <p className="text-[#C8A84B] text-[10px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-[#C8A84B]"></span>
-                    DIRECTORY_INDEX
-                  </p>
-                  {['core', 'surface', 'proving', 'archives', 'load', 'transmission', 'classified'].map(id => {
-                    const isActive = activeSection === id;
-                    return (
-                      <button
-                        key={`nav-${id}`}
-                        className="flex items-center gap-3 group cursor-pointer w-full text-left"
-                        onClick={() => {
-                          document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }}
-                      >
-                        <div className={`w-1 h-1 transition-all duration-300 ${isActive ? 'bg-[#C8A84B] shadow-[0_0_8px_#C8A84B]' : 'bg-[#2a2a2a] group-hover:bg-[#C8A84B]/50'}`}></div>
-                        <span
-                          className={`text-[10px] tracking-widest uppercase transition-all duration-300 ${isActive ? 'text-[#C8A84B] font-bold' : 'text-[#6b6965] group-hover:text-[#c8c2b4]'}`}
-                          style={{ textShadow: isActive ? '0 0 8px rgba(200, 168, 75, 0.4)' : 'none' }}
-                        >
-                          {DATA[id as DistrictID].name}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Right Content Area */}
-              <div id="scroll-container" onScroll={handleSpecScroll} className="flex-1 overflow-y-auto scrollbar-hide space-y-32 pb-32 pt-12 pr-4 relative">
-                {['core', 'surface', 'proving', 'archives', 'load', 'transmission', 'classified'].map((districtId) => {
-                  const data = DATA[districtId as DistrictID];
-                  return (
-                    <motion.section
-                      id={`section-${districtId}`}
-                      key={districtId}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="relative border-t border-[#1a1a1a] pt-12"
-                    >
-                      <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#C8A84B]"></div>
-                      <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#C8A84B]"></div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-                        <div className="md:col-span-4">
-                          <span className="text-[#C8A84B] tracking-[0.4em] uppercase text-[10px] mb-2 block">{data.code}</span>
-                          <h3 className="text-2xl font-black tracking-tighter uppercase text-[#e8e6e0]">{data.name}</h3>
-                        </div>
-
-                        <div className="md:col-span-8">
-                          {data.desc && <p className="text-sm leading-[1.8] text-[#a8a59b] font-light mb-8">{data.desc}</p>}
-
-                          {data.details && data.details.length > 0 && (
-                            <div className="space-y-8 mb-8">
-                              {data.details.map((detail, idx) => (
-                                <div key={idx} className="border-l border-[#2a2a2a] pl-6 relative hover:border-[#C8A84B]/30 transition-colors">
-                                  <div className="absolute left-[-4px] top-2 w-2 h-2 bg-[#1a1a1a] border border-[#2a2a2a]"></div>
-                                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-2 gap-2">
-                                    <h4 className="text-lg font-bold text-[#C8A84B] tracking-wide">{detail.title}</h4>
-                                    {detail.date && <span className="text-[10px] text-[#6b6965] uppercase tracking-widest">{detail.date}</span>}
-                                  </div>
-                                  {detail.subtitle && <p className="text-sm text-[#888] mb-3 uppercase tracking-widest">{detail.subtitle}</p>}
-                                  {detail.description && <p className="text-sm text-[#a8a59b] leading-relaxed">{detail.description}</p>}
-                                  {detail.link && (
-                                    <a href={detail.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-[10px] text-[#C8A84B] uppercase tracking-widest border border-[#C8A84B]/30 px-4 py-2 hover:bg-[#C8A84B]/10 transition-colors">
-                                      ACCESS_LINK ↗
-                                    </a>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                          {data.bullets && data.bullets.length > 0 && (
-                            <ul className="space-y-4 mb-8">
-                              {data.bullets.map((bullet, idx) => (
-                                <li key={idx} className="flex items-start gap-4 text-[#a8a59b] leading-relaxed text-sm">
-                                  <span className="text-[#C8A84B] mt-1 text-[10px]">►</span>
-                                  <span>{bullet}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-
-                          {data.links && data.links.length > 0 && (
-                            <div className="flex flex-col gap-4">
-                              {data.links.map((link, idx) => (
-                                <a
-                                  key={idx}
-                                  href={link.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="border border-[#2a2a2a] p-4 flex justify-between items-center hover:border-[#C8A84B]/50 hover:bg-[#0a0a0a] transition-all max-w-xl group"
-                                >
-                                  <span className="text-[#e8e6e0] font-mono tracking-widest text-sm group-hover:text-[#C8A84B] transition-colors">{link.label}</span>
-                                  <span className="text-[#444] group-hover:text-[#C8A84B] transition-colors">↗</span>
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </motion.section>
-                  );
-                })}
-              </div>
-            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
