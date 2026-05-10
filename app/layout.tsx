@@ -12,10 +12,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'City of Constructed Systems',
+  title: 'DR4KEN.me',
   description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
   openGraph: {
-    title: 'City of Constructed Systems',
+    title: 'DR4KEN.me',
     description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
     type: 'website',
   },

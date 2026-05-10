@@ -34,7 +34,6 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
     const isMobile = window.innerWidth < 768;
 
     const N = isMobile ? 300 : 700;
-    let mouse = { x: 0, y: 0, active: false };
 
     class Particle {
       x: number = 0;
@@ -76,17 +75,6 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
       update(t: number) {
         const mode = modeRef.current;
 
-        // Mouse repulsion (desktop only)
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const radius = 160;
-        if (!isMobile && mouse.active && dist > 0 && dist < radius) {
-          const force = (1 - dist / radius) * 2.2;
-          this.vx += (dx / dist) * force * 0.5;
-          this.vy += (dy / dist) * force * 0.5;
-        }
-
         if (this.hasTarget && (mode === 'forming' || mode === 'formed')) {
           // Lerp toward text target
           const txDiff = this.targetX - this.x;
@@ -117,12 +105,7 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
         if (this.y > H) this.y = 0;
 
         // Alpha
-        let targetAlpha: number;
-        if (this.hasTarget && mode !== 'dispersing') {
-          targetAlpha = 0.85;
-        } else {
-          targetAlpha = this.base + (mouse.active && dist < radius ? (1 - dist / radius) * 0.6 : 0);
-        }
+        const targetAlpha = (this.hasTarget && mode !== 'dispersing') ? 0.85 : this.base;
         this.alpha += (targetAlpha - this.alpha) * 0.06;
       }
 
@@ -139,28 +122,6 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
     const particles: Particle[] = [];
     for (let i = 0; i < N; i++) particles.push(new Particle());
     particlesRef.current = particles;
-
-    function drawMouseConnections() {
-      if (!ctx) return;
-      const nearby = particles.filter(p => {
-        const dx = p.x - mouse.x, dy = p.y - mouse.y;
-        return Math.sqrt(dx * dx + dy * dy) < 180;
-      });
-      for (let i = 0; i < nearby.length; i++) {
-        for (let j = i + 1; j < nearby.length; j++) {
-          const dx = nearby[i].x - nearby[j].x, dy = nearby[i].y - nearby[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < 90) {
-            ctx.beginPath();
-            ctx.moveTo(nearby[i].x, nearby[i].y);
-            ctx.lineTo(nearby[j].x, nearby[j].y);
-            ctx.strokeStyle = `rgba(78, 255, 145, ${(1 - d / 90) * 0.18})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-    }
 
     function drawTextConnections() {
       if (!ctx) return;
@@ -189,36 +150,24 @@ export default function ParticleField({ activeSection }: ParticleFieldProps) {
       ctx.clearRect(0, 0, W, H);
       t++;
       particles.forEach(p => { p.update(t); p.draw(); });
-      if (!isMobile && mouse.active) drawMouseConnections();
       drawTextConnections();
       animId = requestAnimationFrame(loop);
     };
     loop();
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      mouse.active = true;
-    };
-    const handleMouseLeave = () => { mouse.active = false; };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
     window.addEventListener('resize', resize);
 
     return () => {
       cancelAnimationFrame(animId);
       if (modeTimerRef.current) clearTimeout(modeTimerRef.current);
       if (disperseTimerRef.current) clearTimeout(disperseTimerRef.current);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
       window.removeEventListener('resize', resize);
     };
   }, []);
 
   // React to activeSection changes
   useEffect(() => {
-    if (!activeSection) return;
+    if (!activeSection || window.innerWidth < 768) return;
     const particles = particlesRef.current;
     if (!particles.length) return;
 
