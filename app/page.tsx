@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
 
 const Silk = dynamic(() => import("@/components/Silk"), { ssr: false });
+import IntroAnimation from '@/components/IntroAnimation';
+import ParticleField from '@/components/ParticleField';
 
 const AnimatedHeroName = ({ hasEntered }: { hasEntered: boolean }) => {
   const [scanPos, setScanPos] = useState(-1);
@@ -51,20 +53,30 @@ const AnimatedHeroName = ({ hasEntered }: { hasEntered: boolean }) => {
 export default function Portfolio() {
   const router = useRouter();
   const [hasEntered, setHasEntered] = useState(false);
+  const [skipExit, setSkipExit] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
+    // Only skip intro if the user is returning from the map page
+    if (sessionStorage.getItem('cameFromMap') === 'true') {
+      sessionStorage.removeItem('cameFromMap'); // consume it — next reload shows intro
+      setSkipExit(true);
+      setHasEntered(true);
+      return;
+    }
+
     // Hide overflow during the entire intro and transition phase
     document.body.style.overflow = 'hidden';
 
     // Automatically transition to portfolio after animation completes
     const timer1 = setTimeout(() => {
       setHasEntered(true);
-    }, 4800);
+    }, 6900);
 
     // Restore overflow after the portfolio entrance animation completes
     const timer2 = setTimeout(() => {
       document.body.style.overflow = '';
-    }, 4800 + 1600); // 4.8s intro + 1.6s portfolio transition
+    }, 6900 + 1600); // 6.9s intro + 1.6s portfolio transition
 
     return () => {
       clearTimeout(timer1);
@@ -88,7 +100,7 @@ export default function Portfolio() {
       }
 
       const sections = ['#hero','#about','#experience','#projects','#stack','#education','#certs','#contact'];
-      const dots = document.querySelectorAll('.dot');
+      const dots = document.querySelectorAll('.nav-link');
       const mapBtn = document.getElementById('map-btn');
 
       io = new IntersectionObserver(entries => {
@@ -106,11 +118,20 @@ export default function Portfolio() {
           if(e.isIntersecting){
             const idx = sections.indexOf('#' + e.target.id);
             if(idx >= 0) {
-              dots.forEach((d, i) => d.classList.toggle('active', i === idx))
+              dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+              // Update active section for particle text effect
+              // Map section IDs to display names; skip home section
+              if (e.target.id === 'hero') {
+                setActiveSection('');
+                return;
+              }
+              const sectionNames: Record<string, string> = {};
+              const name = sectionNames[e.target.id] ?? e.target.id;
+              setActiveSection(name);
             }
           }
         });
-      }, {threshold: 0.3});
+      }, {threshold: 0.4});
       
       sections.forEach(s => {
         const el = document.querySelector(s);
@@ -124,74 +145,45 @@ export default function Portfolio() {
       };
 
       window.addEventListener('scroll', handleScroll, {passive: true});
-      (window as any)._keldScrollHandler = handleScroll;
+      (window as any)._appScrollHandler = handleScroll;
     };
 
     initObservers();
 
     return () => {
       clearTimeout(initTimer);
-      if ((window as any)._keldScrollHandler) {
-        window.removeEventListener('scroll', (window as any)._keldScrollHandler);
-        delete (window as any)._keldScrollHandler;
+      if ((window as any)._appScrollHandler) {
+        window.removeEventListener('scroll', (window as any)._appScrollHandler);
+        delete (window as any)._appScrollHandler;
       }
       if (io) io.disconnect();
       if (secIO) secIO.disconnect();
     };
   }, [hasEntered]);
 
+  const handleSkip = () => {
+    setHasEntered(true);
+    document.body.style.overflow = '';
+  };
+
   const scrollTo = (id: string) => {
     document.querySelector(id)?.scrollIntoView({behavior: 'smooth'});
   };
 
   return (
+    <>
+    <ParticleField activeSection={activeSection} />
     <AnimatePresence mode="wait">
       {!hasEntered ? (
         <motion.div
           key="intro"
-          className="flex flex-col items-center justify-center min-h-screen relative w-full bg-[#0c0c0c] font-mono text-[var(--keld-text)] overflow-hidden"
-          exit={{ opacity: 0, scale: 1.5, filter: "blur(20px) brightness(2)" }}
+          className="flex flex-col items-center justify-center min-h-screen relative w-full bg-[#080c0a] font-mono text-[var(--app-text)] overflow-hidden z-10"
+          exit={skipExit ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: 1.5, filter: "blur(20px) brightness(2)" }}
           transition={{ duration: 0.8, ease: "easeIn" }}
         >
-          <div className="crt-overlay" />
-          <div className="crt-scanlines" />
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-100">
-            <Silk speed={0.8} scale={0.8} color="#1c231a" noiseIntensity={0.2} rotation={4.8} />
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="text-center relative z-10"
-          >
-            <h1 className="text-[48px] md:text-[64px] font-medium tracking-[0.3em] mb-6 text-[#c8c2b4]">KELD</h1>
-            <p className="text-[13px] md:text-[15px] tracking-[0.15em] text-[#6b6965] mb-16 uppercase max-w-lg mx-auto leading-[2]">
-              A planned city built entirely by one engineer. <br />
-              Every district is a system. <br />
-              Every system is load-bearing.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.5 }}
-            className="relative z-10 w-full max-w-[240px] mt-4 mx-auto"
-          >
-            <div className="flex justify-between text-[#6b6965] text-[10px] tracking-widest mb-3 uppercase">
-              <span>Establishing uplink</span>
-              <span className="blink">_</span>
-            </div>
-            <div className="h-[2px] w-full bg-[#1a1a1a] relative overflow-hidden">
-              <motion.div
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2.5, delay: 2, ease: "easeInOut" }}
-                className="absolute top-0 left-0 h-full bg-[#C8A84B] shadow-[0_0_10px_#C8A84B]"
-              />
-            </div>
-          </motion.div>
+          <div className="crt-overlay z-[60] pointer-events-none" />
+          <div className="crt-scanlines z-[60] pointer-events-none" />
+          <IntroAnimation onSkip={handleSkip} />
         </motion.div>
       ) : (
         <motion.div
@@ -235,16 +227,16 @@ export default function Portfolio() {
             /* ── HERO ── */
             #hero {
               min-height:100vh; display:flex; flex-direction:column; justify-content:center;
-              padding:4rem 3rem; border-bottom:1px solid var(--border2);
+              padding:4rem 3rem; position:relative; border-bottom:1px solid var(--border2);
             }
-            .hero-tag { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:3px; text-transform:uppercase; margin-bottom:2rem; display:flex; align-items:center; gap:8px; }
+            .hero-tag { position:relative; z-index:10; font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:3px; text-transform:uppercase; margin-bottom:2rem; display:flex; align-items:center; gap:8px; }
             .hero-tag::before { content:''; width:24px; height:1px; background:var(--accent); }
-            .hero-name { font-family:var(--mono); font-size:clamp(3rem,8vw,6rem); font-weight:700; line-height:0.95; color:var(--text); letter-spacing:-2px; margin-bottom:1.5rem; }
+            .hero-name { position:relative; z-index:10; font-family:var(--mono); font-size:clamp(3rem,8vw,6rem); font-weight:700; line-height:0.95; color:var(--text); letter-spacing:-2px; margin-bottom:1.5rem; }
             .hero-name span { color:var(--accent); }
-            .hero-sub { font-size:1rem; color:var(--text2); max-width:480px; line-height:1.7; margin-bottom:2.5rem; font-weight:300; }
-            .hero-chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:3rem; }
+            .hero-sub { position:relative; z-index:10; font-size:1rem; color:var(--text2); max-width:480px; line-height:1.7; margin-bottom:2.5rem; font-weight:300; }
+            .hero-chips { position:relative; z-index:10; display:flex; gap:8px; flex-wrap:wrap; margin-bottom:3rem; }
             .chip { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:5px 12px; border:1px solid var(--border2); color:var(--text2); text-transform:uppercase; }
-            .hero-scroll { display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:11px; color:var(--text3); cursor:pointer; text-transform:uppercase; letter-spacing:2px; transition:color 0.2s; }
+            .hero-scroll { position:relative; z-index:10; display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:11px; color:var(--text3); cursor:pointer; text-transform:uppercase; letter-spacing:2px; transition:color 0.2s; }
             .hero-scroll:hover { color:var(--accent); }
             .scroll-line { width:40px; height:1px; background:var(--text3); transition:background 0.2s; }
             .hero-scroll:hover .scroll-line { background:var(--accent); }
@@ -252,7 +244,7 @@ export default function Portfolio() {
             @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
             /* STATUS ROW */
-            .status-row { display:flex; gap:2rem; margin-bottom:3rem; flex-wrap:wrap; }
+            .status-row { position:relative; z-index:10; display:flex; gap:2rem; margin-bottom:3rem; flex-wrap:wrap; }
             .stat { display:flex; flex-direction:column; gap:4px; }
             .stat-label { font-family:var(--mono); font-size:9px; color:var(--text3); text-transform:uppercase; letter-spacing:2px; }
             .stat-val { font-family:var(--mono); font-size:13px; color:var(--text); }
@@ -346,22 +338,27 @@ export default function Portfolio() {
             .contact-arr { color:var(--text3); font-size:16px; transition:transform 0.2s,color 0.2s; }
             .contact-link:hover .contact-arr { transform:translate(3px,-3px); color:var(--accent); }
 
-            /* ── FLOAT MAP BUTTON ── */
             #map-btn {
-              position:fixed; bottom:2rem; right:2rem; z-index:100;
-              background:var(--bg2); border:1px solid var(--accent);
-              color:var(--accent); font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase;
-              padding:12px 20px; cursor:pointer; display:flex; align-items:center; gap:8px;
-              opacity:0; transform:translateY(20px); transition:all 0.3s; pointer-events:none;
+              background:transparent; border:1px solid var(--accent);
+              color:var(--accent); font-family:var(--mono); font-size:10px; letter-spacing:1px; text-transform:uppercase;
+              padding:6px 12px; cursor:pointer; display:flex; align-items:center; gap:6px;
+              transition:all 0.2s;
             }
-            #map-btn.visible { opacity:1; transform:translateY(0); pointer-events:auto; }
             #map-btn:hover { background:var(--accent); color:var(--bg); }
-            #map-btn::before { content:'⬡'; font-size:14px; }
+            #map-btn::before { content:'⬡'; font-size:12px; }
+            .nav-sep { width:1px; height:20px; background:var(--border2); margin:0 0.5rem; }
 
-            /* ── NAV DOTS ── */
-            #nav-dots { position:fixed; right:1.5rem; top:50%; transform:translateY(-50%); z-index:50; display:flex; flex-direction:column; gap:10px; }
-            .dot { width:6px; height:6px; border-radius:50%; background:var(--text3); cursor:pointer; transition:all 0.3s; }
-            .dot.active { background:var(--accent); transform:scale(1.5); }
+            /* ── TOP NAV ── */
+            #top-nav {
+              position:fixed; top:0; left:0; width:100%; height:60px; z-index:100;
+              display:flex; justify-content:center; align-items:center; gap:2rem;
+              background:rgba(5, 10, 6, 0.85); backdrop-filter:blur(8px);
+              border-bottom:1px solid var(--border2);
+            }
+            .nav-link {
+              font-family:var(--mono); font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:color 0.3s;
+            }
+            .nav-link:hover, .nav-link.active { color:var(--accent); }
 
             /* FADE IN */
             .fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.6s ease,transform 0.6s ease; }
@@ -371,22 +368,26 @@ export default function Portfolio() {
               #hero,#about,#experience,#projects,#stack,#education,#certs,#contact { padding:3rem 1.5rem; }
               .proj-grid,.certs-grid,.contact-grid { grid-template-columns:1fr; }
               .hero-name { font-size:2.5rem; }
-              #nav-dots { display:none; }
+              #top-nav { gap:1rem; overflow-x:auto; padding:0 1rem; justify-content:flex-start; }
+              .nav-link { white-space:nowrap; }
             }
           `}} />
           
-          <nav id="nav-dots">
-            <div className="dot active" onClick={() => scrollTo('#hero')} title="Home"></div>
-            <div className="dot" onClick={() => scrollTo('#about')} title="About"></div>
-            <div className="dot" onClick={() => scrollTo('#experience')} title="Experience"></div>
-            <div className="dot" onClick={() => scrollTo('#projects')} title="Projects"></div>
-            <div className="dot" onClick={() => scrollTo('#stack')} title="Stack"></div>
-            <div className="dot" onClick={() => scrollTo('#education')} title="Education"></div>
-            <div className="dot" onClick={() => scrollTo('#certs')} title="Certs"></div>
-            <div className="dot" onClick={() => scrollTo('#contact')} title="Contact"></div>
+          <nav id="top-nav">
+            <div className="nav-link active" onClick={() => scrollTo('#hero')} title="Home">HOME</div>
+            <div className="nav-link" onClick={() => scrollTo('#about')} title="About">ABOUT</div>
+            <div className="nav-link" onClick={() => scrollTo('#experience')} title="Experience">EXPERIENCE</div>
+            <div className="nav-link" onClick={() => scrollTo('#projects')} title="Projects">PROJECTS</div>
+            <div className="nav-link" onClick={() => scrollTo('#stack')} title="Stack">STACK</div>
+            <div className="nav-link" onClick={() => scrollTo('#education')} title="Education">EDUCATION</div>
+            <div className="nav-link" onClick={() => scrollTo('#certs')} title="Certs">CERTS</div>
+            <div className="nav-link" onClick={() => scrollTo('#contact')} title="Contact">CONTACT</div>
+            <div className="nav-sep"></div>
+            <button id="map-btn" onClick={() => {
+              sessionStorage.setItem('cameFromMap', 'true');
+              router.push('/map');
+            }}>View Map</button>
           </nav>
-
-          <button id="map-btn" onClick={() => router.push('/map')}>View City Map</button>
 
           <motion.div
             initial={{ opacity: 0, filter: "blur(20px)", scale: 0.8, rotateX: 45, y: 100 }}
@@ -406,13 +407,14 @@ export default function Portfolio() {
           <div className="stat"><span className="stat-label">Rank</span><span className="stat-val">CF Pupil</span></div>
           <div className="stat"><span className="stat-label">Location</span><span className="stat-val">Delhi, India</span></div>
         </div>
+        <div className="stat-label" style={{marginBottom:'0.75rem'}}>Hobbies</div>
         <div className="hero-chips">
-          <div className="chip">React</div>
-          <div className="chip">Node.js</div>
-          <div className="chip">C++</div>
-          <div className="chip">Python</div>
-          <div className="chip">Full-Stack</div>
-          <div className="chip">AI</div>
+          <div className="chip">Gaming</div>
+          <div className="chip">Music</div>
+          <div className="chip">Reading</div>
+          <div className="chip">Swimming</div>
+          <div className="chip">PenTesting</div>
+          <div className="chip">Cracking</div>
         </div>
         <div className="hero-scroll" onClick={() => scrollTo('#about')}>
           <div className="scroll-line"></div>
@@ -672,13 +674,15 @@ export default function Portfolio() {
           </div>
         </div>
         <div style={{marginTop: '5rem', paddingTop: '2rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem'}}>
-          <span style={{fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px'}}>KELD · CITY OF CONSTRUCTED SYSTEMS</span>
+          <span style={{fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px'}}>CITY OF CONSTRUCTED SYSTEMS</span>
           <span style={{fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text3)', letterSpacing: '2px'}}>DAKSH SHASTRI · 2025</span>
         </div>
       </section>
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+      <div className="fixed bottom-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-t from-[#050a06]/80 to-transparent backdrop-blur-[1px] z-[100]" />
+    </>
   );
 }

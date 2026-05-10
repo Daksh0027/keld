@@ -5,45 +5,45 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-keld-bg: #0D0D0D;
-  --color-keld-surface: #141414;
-  --color-keld-surface2: #181818;
-  --color-keld-border: #2A2A2A;
-  --color-keld-border2: #1E1E1E;
-  --color-keld-text: #E8E6E0;
-  --color-keld-muted: #6B6965;
-  --color-keld-hint: #4A4845;
-  --color-keld-ghost: #2A2826;
-  --color-keld-accent: #C8C2B4;
-  --color-keld-active: #D8D2C4;
+  --color-app-bg: #0D0D0D;
+  --color-app-surface: #141414;
+  --color-app-surface2: #181818;
+  --color-app-border: #2A2A2A;
+  --color-app-border2: #1E1E1E;
+  --color-app-text: #E8E6E0;
+  --color-app-muted: #6B6965;
+  --color-app-hint: #4A4845;
+  --color-app-ghost: #2A2826;
+  --color-app-accent: #C8C2B4;
+  --color-app-active: #D8D2C4;
 
-  --color-keld-status-active: #5A8A6A;
-  --color-keld-status-experimental: #8A7A5A;
-  --color-keld-status-archived: #5A5652;
+  --color-app-status-active: #5A8A6A;
+  --color-app-status-experimental: #8A7A5A;
+  --color-app-status-archived: #5A5652;
 
   --font-mono: var(--font-jetbrains-mono);
 }
 
 :root {
-  --keld-bg: #0D0D0D;
-  --keld-surface: #141414;
-  --keld-surface2: #181818;
-  --keld-border: #2A2A2A;
-  --keld-border2: #1E1E1E;
-  --keld-text: #E8E6E0;
-  --keld-muted: #6B6965;
-  --keld-hint: #4A4845;
-  --keld-ghost: #2A2826;
-  --keld-accent: #C8C2B4;
-  --keld-active: #D8D2C4;
+  --app-bg: #0D0D0D;
+  --app-surface: #141414;
+  --app-surface2: #181818;
+  --app-border: #2A2A2A;
+  --app-border2: #1E1E1E;
+  --app-text: #E8E6E0;
+  --app-muted: #6B6965;
+  --app-hint: #4A4845;
+  --app-ghost: #2A2826;
+  --app-accent: #C8C2B4;
+  --app-active: #D8D2C4;
 
-  --keld-status-active: #5A8A6A;
-  --keld-status-experimental: #8A7A5A;
-  --keld-status-archived: #5A5652;
+  --app-status-active: #5A8A6A;
+  --app-status-experimental: #8A7A5A;
+  --app-status-archived: #5A5652;
 
-  --keld-transition-fast: 0.12s ease;
-  --keld-transition-normal: 0.22s ease;
-  --keld-transition-slow: 0.4s ease;
+  --app-transition-fast: 0.12s ease;
+  --app-transition-normal: 0.22s ease;
+  --app-transition-slow: 0.4s ease;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -88,8 +88,8 @@
 
 body {
   font-family: var(--font-mono), monospace;
-  background-color: var(--keld-bg);
-  color: var(--keld-text);
+  background-color: var(--app-bg);
+  color: var(--app-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -103,8 +103,8 @@ html {
 }
 
 ::selection {
-  background: var(--keld-accent);
-  color: var(--keld-bg);
+  background: var(--app-accent);
+  color: var(--app-bg);
 }
 
 ::-webkit-scrollbar {
@@ -112,15 +112,15 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--keld-bg);
+  background: var(--app-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--keld-border);
+  background: var(--app-border);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--keld-muted);
+  background: var(--app-muted);
 }
 
 @keyframes blink {

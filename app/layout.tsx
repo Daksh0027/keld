@@ -12,10 +12,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Keld — City of Constructed Systems',
+  title: 'City of Constructed Systems',
   description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
   openGraph: {
-    title: 'Keld — City of Constructed Systems',
+    title: 'City of Constructed Systems',
     description: 'A portfolio by Daksh Shastri. Full-stack systems. Every interface load-bearing.',
     type: 'website',
   },
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("scroll-smooth", jetbrainsMono.variable, "font-sans", geist.variable)} suppressHydrationWarning>
-      <body className="min-h-screen bg-[var(--keld-bg)] text-[var(--keld-text)] font-mono antialiased flex flex-col selection:bg-[var(--keld-stamp)] selection:text-[var(--keld-stamptext)]">
+      <body className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] font-mono antialiased flex flex-col selection:bg-[var(--app-stamp)] selection:text-[var(--app-stamptext)]">
 
         {children}
       </body>

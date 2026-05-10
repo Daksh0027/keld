@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function MapPage() {
   return (
-    <main className="min-h-screen bg-[#0c0c0c] text-[var(--keld-text)] font-mono overflow-hidden relative">
+    <main className="min-h-screen bg-[#080c0a] text-[var(--app-text)] font-mono overflow-hidden relative">
       <div className="crt-overlay" />
       <div className="crt-scanlines" />
       <motion.div
@@ -20,7 +20,7 @@ export default function MapPage() {
         <div className="absolute top-8 left-8 z-[100]">
           <Link 
             href="/"
-            className="text-[10px] tracking-[0.3em] text-[#6b6965] hover:text-[#C8A84B] transition-colors uppercase flex items-center gap-2 border border-[#1a1a1a] px-4 py-2 bg-black/50 backdrop-blur-sm"
+            className="text-[10px] tracking-[0.3em] text-[#8a9e8f] hover:text-[#4eff91] transition-colors uppercase flex items-center gap-2 border border-[#1e2e22] px-4 py-2 bg-[#0e1410]/50 backdrop-blur-sm"
           >
             <span className="text-sm leading-none -mt-[2px]">◂</span> RETURN HOME
           </Link>
